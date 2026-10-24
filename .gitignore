@@ -12,3 +12,15 @@ build/
 Thumbs.db
 
 # Note: flutter create adds more entries. Merge them, do not replace this file.
+
+# Additional Flutter and Dart entries
+.pub-cache/
+.pub/
+.packages
+**/doc/api/
+/coverage/
+*.log
+*.class
+*.swp
+app.*.symbols
+app.*.map.json
