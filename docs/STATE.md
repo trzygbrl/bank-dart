@@ -2,6 +2,10 @@ PROJECT STATE (after Tasks D-07 to D-12)
 - Task: D-07 to D-12 — UI Integration, Keyboard Shortcuts, End-to-End QA, and Parity Documentation
 - Status: Completed
 - Current State: All required views are integrated. `HomePage` owns the single account, provides view navigation and app-wide Ctrl+1 through Ctrl+5 shortcuts, and handles exit confirmation. `BalanceView` displays the current balance and dynamic startup caption. `AmountFormView` implements PRD-compliant validation and feedback for the deposit and withdrawal views. `HistoryView` displays chronological transactions with a fixed header and alternating row fills. Task D-12 adds an end-to-end banking flow test, an acceptance-test log, a screenshot guide, and Java-Dart parity documentation.
+PROJECT STATE (after Tasks D-07 to D-11)
+- Task: D-07 to D-11 — Complete UI Views Integration, Keyboard Shortcuts, and Responsive Layout Verification
+- Status: Completed
+- Current State: Implemented and integrated all required views into the application shell. `BalanceView` displays the current balance with a dynamic startup caption using `onPrimary` text. `AmountFormView` provides shared stateful form logic for deposits and withdrawals, handling PRD-compliant input validation, inline error messaging, and field resets. `DepositView` and `WithdrawView` wrap `AmountFormView` with their specific account actions (including insufficient funds checks). `HistoryView` displays a scrolling list of transactions with a fixed header and alternating row colors (bypassing `ViewPage` to avoid scroll view layout constraints). `HomePage` handles navigation, the five Ctrl+number shortcuts, and exit confirmation. Widget tests verify all four views render at widths of 860 px and 1000 px without overflow.
 - Environment:
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
@@ -66,6 +70,11 @@ PROJECT STATE (after Tasks D-07 to D-12)
   - Baseline before D-12 additions: `flutter analyze` passed with 0 issues; `flutter test` passed all 100 tests.
   - D-12 focused integration: `flutter test test/app_flow_test.dart` passed (2 tests).
   - D-12 final verification: `flutter analyze` reported 0 issues; `flutter test` passed all 102 tests.
+  - flutter analyze: Passed with 0 issues reported.
+  - flutter test: Passed successfully.
+- Post-fix hardening (2026-10-25): Added guard rails in `BankAccount` so non-positive deposits and withdrawals are ignored or rejected without mutating balance/history, preventing invalid direct calls from bypassing validated input checks.
+- Task D-11 (2026-10-25): Added app-wide Ctrl+1 through Ctrl+5 shortcuts using `CallbackShortcuts` with an autofocus focus scope, so shortcuts continue to work while an amount field has focus. Amount-field typing remains available. Added HomePage widget coverage for all five shortcuts, focused-field interaction, and all four views at 860 px and 1000 px widths; no additional layout changes were required.
+- Test inventory: `test/bank_account_test.dart` covers 7 account cases; `test/home_page_test.dart` covers view navigation, shortcuts, exit confirmation, and responsive rendering.
 - Analyze: flutter analyze
 - Test: flutter test
 - Run command: flutter run -d windows (or macos / linux)
