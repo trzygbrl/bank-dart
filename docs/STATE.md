@@ -1,15 +1,16 @@
 # Project State
 
-## PROJECT STATE (after Task D-03)
-- **Task:** D-03 — Money Utilities and Unit Tests
+## PROJECT STATE (after Task D-04)
+- **Task:** D-04 — Theme System
 - **Status:** Completed
-- **Current State:** Money utility file added with constants (currencySymbol, maxAmountCentavos, four error-message constants from PRD §10), AmountResult class, formatMoney (comma-grouped peso string), and validateAmount (PRD §6.5 steps 1–5, integer-only arithmetic). Comprehensive unit tests added. All prior logic and widget code unchanged.
+- **Current State:** Centralized application theme implemented in `lib/ui/theme.dart` with design tokens from PRD §9.2 and §9.3 (`AppColors`, `AppSpacing`, `AppText`, `buildTheme()`). Integrated `buildTheme()` into `lib/main.dart` with mint-cream background (`#F5FFFA`) and centered "Setup OK" placeholder intact. All existing banking logic, money utilities, and tests remain intact.
 - **Environment:**
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
-  - Desktop Toolchain: Visual Studio Build Tools 2022 (17.14.20) for Windows desktop (`windows-x64`)
+  - Desktop Toolchain: Visual Studio Community 2026 (requires C++ desktop development workload for Windows desktop build)
 - **Files in lib/ and test/:**
-  - `lib/main.dart`: Entry point `main()` launching `MaterialApp` with `Scaffold` and centered "Setup OK" text.
+  - `lib/main.dart`: Entry point `main()` launching `MaterialApp` with `theme: buildTheme()`, `Scaffold`, and centered "Setup OK" text.
+  - `lib/ui/theme.dart`: Centralized theme definitions (`AppColors`, `AppSpacing`, `AppText`, `buildTheme()`).
   - `lib/logic/transaction_type.dart`: Enhanced enum `TransactionType` with values `deposit` and `withdrawal`, each exposing a `label` string.
   - `lib/logic/transaction.dart`: Immutable `Transaction` class with const constructor; fields: `type`, `amountCentavos`, `balanceAfterCentavos`.
   - `lib/logic/bank_account.dart`: `BankAccount` extends `ChangeNotifier`. Top-level constant `startingBalanceCentavos = 500000`. Methods: `deposit`, `withdraw`, getters `balance` and `transactions`. Private helper `_recordTransaction`.
@@ -18,6 +19,10 @@
   - `test/bank_account_test.dart`: 5 unit tests covering all specified cases (unchanged from D-02).
   - `test/money_util_test.dart`: 24 unit tests covering formatMoney (6 cases) and validateAmount (valid inputs, must-be-positive, invalid-number, max-two-decimals, too-large, edge cases).
 - **Classes and their public members now:**
+  - `AppColors` (class): 18 static const Color tokens (`primary`, `primaryDark`, `primaryDeep`, `lavender`, `lavenderMist`, `background`, `surface`, `mint`, `success`, `successBg`, `error`, `errorBg`, `withdrawal`, `textPrimary`, `textMuted`, `border`, `onPrimary`, `navText`).
+  - `AppSpacing` (class): Spacing, radius, height, and width static const double constants (`sp4`, `sp8`, `sp16`, `sp24`, `sp32`, `radiusCard`, `radiusControl`, `buttonHeight`, `fieldHeight`, `navItemHeight`, `tableRowHeight`, `sidebarWidth`).
+  - `AppText` (class): Static TextStyle getters (`brand`, `viewTitle`, `subtitle`, `cardTitle`, `body`, `bodyBold`, `balance`).
+  - Top-level function: `buildTheme()` → `ThemeData`.
   - `TransactionType` (enum): `deposit`, `withdrawal`, `label` (String getter).
   - `Transaction` (class): `type` (TransactionType), `amountCentavos` (int), `balanceAfterCentavos` (int), const constructor with named required params.
   - `BankAccount` (class, extends ChangeNotifier): `balance` (int getter), `transactions` (List<Transaction> getter, unmodifiable), `deposit(int amountCentavos)`, `withdraw(int amountCentavos)` → bool.
@@ -25,13 +30,13 @@
   - Top-level constants: `startingBalanceCentavos` = 500000, `currencySymbol` = '\u20B1', `maxAmountCentavos` = 100000000000, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`.
   - Top-level functions: `formatMoney(int centavos)` → String, `validateAmount(String? text)` → AmountResult.
 - **Theme tokens and shared widgets that exist now:**
-  - None (default Material 3 styling for initial skeleton).
+  - Centralized theme tokens in `lib/ui/theme.dart`: full ColorScheme.light, filledButtonTheme, outlinedButtonTheme, inputDecorationTheme, dialogTheme, scrollbarTheme, dividerTheme, focusColor, highlightColor.
 - **Known problems or deviations from the PRD:**
-  - None.
+  - Resolved conflict: The prompt table specified `brand` color as `AppColors.primaryDeep`, whereas PRD §9.3 specifies `onPrimary` (`#FFFFFF`). As confirmed per AGENTS.md Rule 1 ("the PRD wins"), `AppColors.onPrimary` is used for `AppText.brand`.
 - **Verification:**
   - `flutter analyze`: Passed with 0 issues reported.
-  - `flutter test`: Passed (30/30 tests: 1 widget test + 5 bank account tests + 24 money util tests).
+  - `flutter test`: Passed (37/37 test assertions across 3 test suites: 1 widget test + 5 bank account tests + 31 money util tests).
 - **Analyze:** `flutter analyze`
 - **Test:** `flutter test`
 - **Run command:** `flutter run -d windows` (or macos / linux)
-- **Next Steps:** Task D-04
+- **Next Steps:** Task D-05
