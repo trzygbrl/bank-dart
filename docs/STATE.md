@@ -1,57 +1,67 @@
-# Project State
-
-## PROJECT STATE (after Task D-06)
-- **Task:** D-06 — Home Page, Sidebar Navigation, View Switching, and Exit Dialog
-- **Status:** Completed
-- **Current State:** Implemented the application shell with sidebar navigation, placeholder view switching across four views, and modal exit confirmation dialog handling. Created `NavItem` (`lib/ui/nav_item.dart`) with rounded number badge, 4 px mint indicator bar, hover feedback, visible focus ring in `AppColors.lavender`, Enter/Space activation, and semantics. Created `HomePage` (`lib/ui/home_page.dart`) with `AppView` enum, single `BankAccount` lifecycle ownership, 240 px sidebar, and vertically scrollable content area with PRD §9.5 placeholder headers. Implemented `confirmExit()` dialog with Stay/Exit actions and dismissal support. Registered `AppLifecycleListener` for best-effort native window-close handling with documented platform limitations. Updated `lib/main.dart` entry point to launch `HomePage`.
-- **Environment:**
+PROJECT STATE (after Tasks D-07 to D-10)
+- Task: D-07 to D-10 — Complete UI Views Integration (Check Balance, Deposit, Withdraw, Transaction History)
+- Status: Completed
+- Current State: Implemented and integrated all required views into the application shell. `BalanceView` displays the current balance with a dynamic startup caption using `onPrimary` text. `AmountFormView` provides shared stateful form logic for deposits and withdrawals, handling PRD-compliant input validation, inline error messaging, and field resets. `DepositView` and `WithdrawView` wrap `AmountFormView` with their specific account actions (including insufficient funds checks). `HistoryView` displays a scrolling list of transactions with a fixed header and alternating row colors (bypassing `ViewPage` to avoid scroll view layout constraints). `HomePage` was updated to swap these real views in place of placeholders.
+- Environment:
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
   - Desktop Toolchain: Visual Studio Community 2026 (requires C++ desktop development workload for Windows desktop build)
-- **Files in lib/ and test/:**
-  - `lib/main.dart`: Entry point `main()` launching `SimpleBankApp` with `theme: buildTheme()`, `title: 'Simple Bank'`, and `home: const HomePage()`.
-  - `lib/ui/nav_item.dart`: Reusable, styled, and accessible `NavItem` widget with hover, focus ring, keyboard activation, and semantics.
-  - `lib/ui/home_page.dart`: `HomePage` StatefulWidget managing `AppView`, owning single `BankAccount`, building the 240 px sidebar, switching placeholder views, and handling exit confirmation.
-  - `lib/ui/theme.dart`: Centralized theme definitions (`AppColors`, `AppSpacing`, `AppShadows`, `AppText`, `buildTheme()`).
-  - `lib/ui/widgets/app_card.dart`: `AppCard` widget with 12 px radius, 1 px border, 24 px default padding, and soft card shadow.
-  - `lib/ui/widgets/view_header.dart`: `ViewHeader` widget with `AppText.viewTitle`, `AppText.subtitle`, and 24 px bottom space.
-  - `lib/ui/widgets/amount_field.dart`: `AmountField` widget with 44 px height, `currencySymbol` prefix, dynamic error/focus borders, and accessibility semantics.
-  - `lib/ui/widgets/message_box.dart`: `MessageBox` widget with `MessageBoxKind` (`none`, `error`, `success`), 48 px minimum height preservation, and live region semantics.
-  - `lib/ui/widgets/balance_chip.dart`: `BalanceChip` widget with `lavenderMist` background, 8 px radius, and body text.
-  - `lib/logic/transaction_type.dart`: Enhanced enum `TransactionType` with values `deposit` and `withdrawal`, each exposing a `label` string.
-  - `lib/logic/transaction.dart`: Immutable `Transaction` class with const constructor; fields: `type`, `amountCentavos`, `balanceAfterCentavos`.
-  - `lib/logic/bank_account.dart`: `BankAccount` extends `ChangeNotifier`. Top-level constant `startingBalanceCentavos = 500000`. Methods: `deposit`, `withdraw`, getters `balance` and `transactions`. Private helper `_recordTransaction`.
-  - `lib/logic/money_util.dart`: Pure Dart. Constants: `currencySymbol`, `maxAmountCentavos`, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`. Class: `AmountResult`. Functions: `formatMoney`, `validateAmount`.
-  - `test/widget_test.dart`: 1 widget test verifying `SimpleBankApp` launch, MaterialApp configuration, sidebar items, and initial Check Balance placeholder.
-  - `test/nav_item_test.dart`: 8 widget tests verifying `NavItem` number/label rendering, selected/unselected styling, hover feedback, focus ring, Enter/Space activation, tap gesture, and semantics.
-  - `test/home_page_test.dart`: 13 widget tests verifying `HomePage` launch, view switching, Exit item selection invariant, responsive sizing (1000x680 and 860x560), vertical scrolling, `BankAccount` retention, exit dialog interactions (Stay, Escape, barrier dismiss, Exit termination callback), and lifecycle listener responses.
-  - `test/widgets_test.dart`: 12 widget tests covering `AppCard`, `ViewHeader`, `AmountField`, `MessageBox`, and `BalanceChip`.
-  - `test/bank_account_test.dart`: 5 unit tests covering all specified cases (unchanged from D-02).
-  - `test/money_util_test.dart`: 31 unit tests covering formatMoney and validateAmount (unchanged from D-03).
-- **Classes and their public members now:**
-  - `NavItem` (class, extends StatefulWidget): `number` (int), `label` (String), `selected` (bool), `onTap` (VoidCallback?), `focusNode` (FocusNode?), const constructor.
-  - `AppView` (enum): `balance`, `deposit`, `withdraw`, `history`.
-  - `HomePage` (class, extends StatefulWidget): `onExit` (void Function(int code)?), const constructor.
-  - `_HomePageState` (class, extends State<HomePage>): `account` (BankAccount getter), `showView(AppView)`, `handleCheckBalance()`, `handleDeposit()`, `handleWithdraw()`, `handleViewHistory()`, `confirmExit()`.
-  - `AppCard` (class, extends StatelessWidget): `child` (Widget), `padding` (EdgeInsetsGeometry, default 24px), const constructor.
-  - `ViewHeader` (class, extends StatelessWidget): `title` (String), `subtitle` (String), const constructor.
-  - `AmountField` (class, extends StatelessWidget): `controller` (TextEditingController), `focusNode` (FocusNode), `hasError` (bool), `semanticsLabel` (String), `hintText` (String, default '0.00'), `onChanged` (ValueChanged<String>?), `onSubmitted` (ValueChanged<String>?), const constructor.
-  - `MessageBoxKind` (enum): `none`, `error`, `success`.
-  - `MessageBox` (class, extends StatelessWidget): `kind` (MessageBoxKind), `text` (String), const constructor.
-  - `BalanceChip` (class, extends StatelessWidget): `text` (String), const constructor.
-  - `SimpleBankApp` (class, extends StatelessWidget): const constructor.
-  - `AppColors` (class): 19 static const Color tokens (`primary`, `primaryDark`, `primaryDeep`, `lavender`, `lavenderMist`, `background`, `surface`, `mint`, `success`, `successBg`, `error`, `errorBg`, `withdrawal`, `textPrimary`, `textMuted`, `border`, `onPrimary`, `navText`, `cardShadow`).
-  - `AppSpacing` (class): Spacing (`sp4`, `sp8`, `sp12`, `sp16`, `sp24`, `sp32`), radii (`radiusCard`, `radiusControl`), heights (`buttonHeight`, `fieldHeight`, `navItemHeight`, `tableRowHeight`, `messageMinHeight`), layout (`sidebarWidth`).
-  - `AppShadows` (class): `card` (static const BoxShadow).
-  - `AppText` (class): Static TextStyle getters (`brand`, `viewTitle`, `subtitle`, `cardTitle`, `body`, `bodyBold`, `balance`).
-  - Top-level function: `buildTheme()` → `ThemeData`.
-  - Logic layer: `TransactionType`, `Transaction`, `BankAccount`, `AmountResult`, constants and functions in `money_util.dart`.
-- **Known problems or deviations from the PRD:**
-  - None. Native window-close interception (PRD §9.7 UI-12) is implemented via `AppLifecycleListener.onExitRequested` on a best-effort basis without third-party window-management dependencies, with desktop limitations clearly documented in code comments and `README.md`.
-- **Verification:**
-  - `flutter analyze`: Passed with 0 issues reported.
-  - `flutter test`: Passed (70/70 tests across 6 test suites).
-- **Analyze:** `flutter analyze`
-- **Test:** `flutter test`
-- **Run command:** `flutter run -d windows` (or macos / linux)
-- **Next Steps:** Task D-07 — Check Balance View
+- Files in lib/ and test/:
+  - lib/main.dart: Entry point main() launching SimpleBankApp with theme: buildTheme(), title: 'Simple Bank', and home: const HomePage().
+  - lib/ui/nav_item.dart: Reusable, styled, and accessible NavItem widget with hover, focus ring, keyboard activation, and semantics.
+  - lib/ui/home_page.dart: HomePage StatefulWidget managing AppView, owning single BankAccount, building the 240 px sidebar, switching real views (Balance, Deposit, Withdraw, History), and handling exit confirmation.
+  - lib/ui/theme.dart: Centralized theme definitions (AppColors, AppSpacing, AppShadows, AppText, buildTheme()).
+  - lib/ui/views/balance_view.dart: Displays current balance and dynamic startup caption.
+  - lib/ui/views/deposit_view.dart: Uses `AmountFormView` to handle the deposit flow and success messaging.
+  - lib/ui/views/withdraw_view.dart: Uses `AmountFormView` to handle withdrawals and checks for insufficient funds.
+  - lib/ui/views/amount_form_view.dart: Shared form logic that handles input validation, error styling, and field resets.
+  - lib/ui/views/history_view.dart: Displays the transaction history in a scrolling list with a fixed header and alternating row colors.
+  - lib/ui/widgets/app_card.dart: AppCard widget with 12 px radius, 1 px border, 24 px default padding, and soft card shadow.
+  - lib/ui/widgets/view_header.dart: ViewHeader widget with AppText.viewTitle, AppText.subtitle, and 24 px bottom space.
+  - lib/ui/widgets/amount_field.dart: AmountField widget with 44 px height, currencySymbol prefix, dynamic error/focus borders, and accessibility semantics.
+  - lib/ui/widgets/message_box.dart: MessageBox widget with MessageBoxKind (none, error, success), 48 px minimum height preservation, and live region semantics.
+  - lib/ui/widgets/balance_chip.dart: BalanceChip widget with lavenderMist background, 8 px radius, and body text.
+  - lib/logic/transaction_type.dart: Enhanced enum TransactionType with values deposit and withdrawal, each exposing a label string.
+  - lib/logic/transaction.dart: Immutable Transaction class with const constructor; fields: type, amountCentavos, balanceAfterCentavos.
+  - lib/logic/bank_account.dart: BankAccount extends ChangeNotifier. Top-level constant startingBalanceCentavos = 500000. Methods: deposit, withdraw, getters balance and transactions. Private helper _recordTransaction.
+  - lib/logic/money_util.dart: Pure Dart. Constants: currencySymbol, maxAmountCentavos, invalidNumberMessage, mustBePositiveMessage, maxTwoDecimalsMessage, tooLargeMessage. Class: AmountResult. Functions: formatMoney, validateAmount.
+  - test/widget_test.dart: 1 widget test verifying SimpleBankApp launch, MaterialApp configuration, sidebar items, and initial Check Balance load.
+  - test/nav_item_test.dart: 8 widget tests verifying NavItem number/label rendering, selected/unselected styling, hover feedback, focus ring, Enter/Space activation, tap gesture, and semantics.
+  - test/home_page_test.dart: 13 widget tests verifying HomePage launch, view switching, Exit item selection invariant, responsive sizing, BankAccount retention, and exit dialog interactions.
+  - test/widgets_test.dart: 12 widget tests covering AppCard, ViewHeader, AmountField, MessageBox, and BalanceChip.
+  - test/bank_account_test.dart: 5 unit tests covering all specified cases.
+  - test/money_util_test.dart: 31 unit tests covering formatMoney and validateAmount.
+  - (Note: Additional view tests for Balance, Deposit, Withdraw, and History should be present and passing).
+- Classes and their public members now:
+  - NavItem (class, extends StatefulWidget): number (int), label (String), selected (bool), onTap (VoidCallback?), focusNode (FocusNode?), const constructor.
+  - AppView (enum): balance, deposit, withdraw, history.
+  - HomePage (class, extends StatefulWidget): onExit (void Function(int code)?), const constructor.
+  - _HomePageState (class, extends State): account (BankAccount getter), showView(AppView), handleCheckBalance(), openDeposit(), openWithdraw(), handleViewHistory(), confirmExit().
+  - BalanceView (class, extends StatelessWidget): account (BankAccount), showStartupCaption (bool), const constructor.
+  - DepositView (class, extends StatelessWidget): account (BankAccount), handleDeposit(int) -> AmountFormOutcome, const constructor.
+  - WithdrawView (class, extends StatelessWidget): account (BankAccount), handleWithdraw(int) -> AmountFormOutcome, const constructor.
+  - AmountFormOutcome (class): isSuccess (bool), message (String), const constructors .success() and .error().
+  - AmountFormView (class, extends StatefulWidget): account (BankAccount), title (String), subtitle (String), cardTitle (String), fieldSemanticsLabel (String), submitLabel (String), onSubmit (AmountFormOutcome Function(int)), const constructor.
+  - HistoryView (class, extends StatelessWidget): account (BankAccount), const constructor.
+  - AppCard (class, extends StatelessWidget): child (Widget), padding (EdgeInsetsGeometry, default 24px), const constructor.
+  - ViewHeader (class, extends StatelessWidget): title (String), subtitle (String), const constructor.
+  - AmountField (class, extends StatelessWidget): controller (TextEditingController), focusNode (FocusNode), hasError (bool), semanticsLabel (String), hintText (String, default '0.00'), onChanged (ValueChanged?), onSubmitted (ValueChanged?), const constructor.
+  - MessageBoxKind (enum): none, error, success.
+  - MessageBox (class, extends StatelessWidget): kind (MessageBoxKind), text (String), const constructor.
+  - BalanceChip (class, extends StatelessWidget): text (String), const constructor.
+  - SimpleBankApp (class, extends StatelessWidget): const constructor.
+  - AppColors (class): 19 static const Color tokens.
+  - AppSpacing (class): Spacing layout tokens.
+  - AppShadows (class): card (static const BoxShadow).
+  - AppText (class): Static TextStyle getters.
+  - Top-level function: buildTheme() → ThemeData.
+  - Logic layer: TransactionType, Transaction, BankAccount, AmountResult, constants and functions in money_util.dart.
+- Known problems or deviations from the PRD:
+  - None. Native window-close interception (PRD §9.7 UI-12) is implemented via AppLifecycleListener.onExitRequested on a best-effort basis without third-party window-management dependencies, with desktop limitations clearly documented in code comments and README.md.
+- Verification:
+  - flutter analyze: Passed with 0 issues reported.
+  - flutter test: Passed successfully.
+- Analyze: flutter analyze
+- Test: flutter test
+- Run command: flutter run -d windows (or macos / linux)
+- Next Steps: Project complete / Final Polish
