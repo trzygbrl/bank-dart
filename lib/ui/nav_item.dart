@@ -36,6 +36,7 @@ class NavItem extends StatefulWidget {
   State<NavItem> createState() => _NavItemState();
 }
 
+/// Tracks hover and keyboard focus feedback for [NavItem].
 class _NavItemState extends State<NavItem> {
   bool _isHovered = false;
   bool _isFocused = false;
@@ -44,25 +45,24 @@ class _NavItemState extends State<NavItem> {
     widget.onTap?.call();
   }
 
+  /// Builds the accessible item with selected, hover, and focus feedback.
   @override
   Widget build(BuildContext context) {
-    final Color textColor =
-        widget.selected ? AppColors.onPrimary : AppColors.navText;
+    final Color textColor = widget.selected
+        ? AppColors.onPrimary
+        : AppColors.navText;
     final Color badgeBgColor = widget.selected
         ? Colors.white.withValues(alpha: 0.20)
         : Colors.white.withValues(alpha: 0.10);
-    final Color badgeTextColor =
-        widget.selected ? AppColors.onPrimary : AppColors.navText;
+    final Color badgeTextColor = widget.selected
+        ? AppColors.onPrimary
+        : AppColors.navText;
 
     Color backgroundColor = Colors.transparent;
     if (widget.selected) {
       backgroundColor = AppColors.primary;
       if (_isHovered) {
-        backgroundColor = Color.lerp(
-          AppColors.primary,
-          Colors.white,
-          0.10,
-        )!;
+        backgroundColor = Color.lerp(AppColors.primary, Colors.white, 0.10)!;
       }
     } else if (_isHovered) {
       backgroundColor = Colors.white.withValues(alpha: 0.08);
@@ -136,9 +136,7 @@ class _NavItemState extends State<NavItem> {
               child: Stack(
                 children: [
                   // Background fill
-                  Container(
-                    color: backgroundColor,
-                  ),
+                  Container(color: backgroundColor),
                   // Left mint indicator bar (4 px wide)
                   Positioned(
                     left: 0,

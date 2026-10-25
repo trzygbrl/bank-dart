@@ -20,6 +20,7 @@ class DepositView extends StatelessWidget {
     );
   }
 
+  /// Configures the shared form for deposit actions.
   @override
   Widget build(BuildContext context) {
     return AmountFormView(

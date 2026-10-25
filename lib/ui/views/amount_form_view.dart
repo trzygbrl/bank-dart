@@ -67,6 +67,7 @@ class AmountFormView extends StatefulWidget {
   State<AmountFormView> createState() => _AmountFormViewState();
 }
 
+/// Manages input state, validation feedback, and account-action submission.
 class _AmountFormViewState extends State<AmountFormView> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -74,6 +75,7 @@ class _AmountFormViewState extends State<AmountFormView> {
   String _messageText = '';
   bool _hasError = false;
 
+  /// Disposes the text controller and focus node owned by this form.
   @override
   void dispose() {
     _controller.dispose();
@@ -81,6 +83,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     super.dispose();
   }
 
+  /// Selects the entire value so an invalid entry can be replaced quickly.
   void _selectAllText() {
     _controller.selection = TextSelection(
       baseOffset: 0,
@@ -88,6 +91,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     );
   }
 
+  /// Displays an inline error, restores field focus, and selects its value.
   void _showError(String message) {
     setState(() {
       _messageKind = MessageBoxKind.error;
@@ -98,6 +102,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     _selectAllText();
   }
 
+  /// Validates the current text and performs the configured account action.
   void _submit() {
     final AmountResult result = validateAmount(_controller.text);
     if (!result.isValid) {
@@ -119,6 +124,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     });
   }
 
+  /// Clears the form and returns focus to the amount input.
   void _clear() {
     setState(() {
       _controller.clear();
@@ -129,6 +135,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     _focusNode.requestFocus();
   }
 
+  /// Clears outdated feedback once the user changes the amount.
   void _onFieldChanged(String _) {
     if (_messageKind != MessageBoxKind.none || _hasError) {
       setState(() {
@@ -139,6 +146,7 @@ class _AmountFormViewState extends State<AmountFormView> {
     }
   }
 
+  /// Renders the shared deposit or withdrawal form.
   @override
   Widget build(BuildContext context) {
     return ViewPage(

@@ -80,12 +80,7 @@ void main() {
       account.deposit(100000);
 
       final list = account.transactions;
-      expect(
-        () => list.add(
-          account.transactions[0],
-        ),
-        throwsUnsupportedError,
-      );
+      expect(() => list.add(account.transactions[0]), throwsUnsupportedError);
 
       // The internal history remains unchanged.
       expect(account.transactions, hasLength(1));

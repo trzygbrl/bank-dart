@@ -9,9 +9,8 @@ import 'nav_item.dart';
 import 'theme.dart';
 import 'views/balance_view.dart';
 import 'views/deposit_view.dart';
-import 'views/withdraw_view.dart';
-import 'widgets/view_page.dart';
 import 'views/history_view.dart';
+import 'views/withdraw_view.dart';
 
 /// Available application views for Simple Bank.
 enum AppView {
@@ -30,8 +29,8 @@ enum AppView {
 
 /// Main desktop application shell for Simple Bank.
 ///
-/// Contains sidebar navigation, the active content view, keyboard shortcuts,
-/// and exit confirmation dialog handling.
+/// Owns the account and coordinates sidebar navigation, active views,
+/// keyboard shortcuts, and exit confirmation.
 class HomePage extends StatefulWidget {
   /// Creates the [HomePage] widget.
   const HomePage({super.key, this.onExit});
@@ -45,6 +44,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+/// Owns the account session, selected view, and native-exit lifecycle listener.
 class _HomePageState extends State<HomePage> {
   late final BankAccount _account;
   AppView _selectedView = AppView.balance;
@@ -64,9 +64,10 @@ class _HomePageState extends State<HomePage> {
   // The sidebar Exit item (confirmExit) provides the reliable, fully-tested exit flow.
   late final AppLifecycleListener _lifecycleListener;
 
-  /// Exposes the bank account owned by this page for inspection or view integration.
+  /// Returns the account shared by every view during this app session.
   BankAccount get account => _account;
 
+  /// Initializes the account and subscribes to supported exit requests.
   @override
   void initState() {
     super.initState();
@@ -76,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Releases the lifecycle listener and account owned by this state.
   @override
   void dispose() {
     _lifecycleListener.dispose();
@@ -119,7 +121,7 @@ class _HomePageState extends State<HomePage> {
     showView(AppView.history);
   }
 
-  /// Displays the modal exit confirmation dialog and returns true if confirmed.
+  /// Displays the modal exit confirmation and returns whether Exit was chosen.
   Future<bool> _showExitConfirmationDialog() async {
     if (!mounted) {
       return false;
@@ -151,7 +153,9 @@ class _HomePageState extends State<HomePage> {
     return result ?? false;
   }
 
-  /// Shows the exit confirmation dialog and terminates the application if confirmed.
+  /// Shows confirmation and exits when accepted.
+  ///
+  /// Uses [HomePage.onExit] in tests; production uses `exit(0)`.
   Future<void> confirmExit() async {
     if (_isExitDialogOpen) {
       return;
@@ -187,8 +191,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Builds the content for the selected view. One branch per view; each view
-  /// owns its own padding and scrolling through [ViewPage].
+  /// Returns the active view; each view manages its own padding and scrolling.
   Widget _buildView() {
     return switch (_selectedView) {
       AppView.balance => BalanceView(
@@ -201,18 +204,21 @@ class _HomePageState extends State<HomePage> {
     };
   }
 
+  /// Renders the sidebar and active view in the application shell.
   @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
-        SingleActivator(LogicalKeyboardKey.digit1, control: true):
+        const SingleActivator(LogicalKeyboardKey.digit1, control: true):
             handleCheckBalance,
-        SingleActivator(LogicalKeyboardKey.digit2, control: true): openDeposit,
-        SingleActivator(LogicalKeyboardKey.digit3, control: true): openWithdraw,
-        SingleActivator(LogicalKeyboardKey.digit4, control: true):
+        const SingleActivator(LogicalKeyboardKey.digit2, control: true):
+            openDeposit,
+        const SingleActivator(LogicalKeyboardKey.digit3, control: true):
+            openWithdraw,
+        const SingleActivator(LogicalKeyboardKey.digit4, control: true):
             handleViewHistory,
-        SingleActivator(LogicalKeyboardKey.digit5, control: true): () =>
-            confirmExit(),
+        const SingleActivator(LogicalKeyboardKey.digit5, control: true):
+            confirmExit,
       },
       child: Focus(
         autofocus: true,

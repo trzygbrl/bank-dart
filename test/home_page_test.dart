@@ -166,6 +166,7 @@ void main() {
       await tester.tap(find.widgetWithText(OutlinedButton, 'Stay'));
       await tester.pumpAndSettle();
       expect(exitCode, isNull);
+      expect(find.byType(HomePage), findsOneWidget);
     });
 
     testWidgets(
@@ -178,7 +179,6 @@ void main() {
 
         await _pressControlDigit(tester, 2);
         final amountField = find.byType(TextField);
-        await tester.tap(amountField);
         await tester.enterText(amountField, '123');
         expect(tester.widget<TextField>(amountField).controller!.text, '123');
 
@@ -228,6 +228,44 @@ void main() {
     );
 
     testWidgets(
+      'all views render without overflow at widths 860px and 1000px',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          MaterialApp(theme: buildTheme(), home: const HomePage()),
+        );
+        await tester.pumpAndSettle();
+
+        final dynamic state = tester.state(find.byType(HomePage));
+        (state.account as BankAccount).deposit(100000);
+        await tester.pumpAndSettle();
+
+        for (final width in <double>[860, 1000]) {
+          tester.view.physicalSize = Size(width, 560);
+          await tester.pumpAndSettle();
+
+          for (final label in <String>[
+            'Check Balance',
+            'Deposit Money',
+            'Withdraw Money',
+            'View Transaction History',
+          ]) {
+            await tester.tap(find.widgetWithText(NavItem, label));
+            await tester.pumpAndSettle();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: '$label should fit at $width px wide',
+            );
+          }
+        }
+      },
+    );
+
+    testWidgets(
       'Content area can scroll when available height is constrained',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(860, 250);
@@ -250,42 +288,6 @@ void main() {
         await tester.drag(scrollViewFinder, const Offset(0, -50));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-      },
-    );
-
-    testWidgets(
-      'all views render without overflow at widths 860px and 1000px',
-      (WidgetTester tester) async {
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-
-        await tester.pumpWidget(
-          MaterialApp(theme: buildTheme(), home: const HomePage()),
-        );
-        await tester.pumpAndSettle();
-
-        final dynamic state = tester.state(find.byType(HomePage));
-        (state.account as BankAccount).deposit(100000);
-        await tester.pumpAndSettle();
-
-        for (final width in <double>[860, 1000]) {
-          tester.view.physicalSize = Size(width, 560);
-          for (final label in <String>[
-            'Check Balance',
-            'Deposit Money',
-            'Withdraw Money',
-            'View Transaction History',
-          ]) {
-            await tester.tap(find.widgetWithText(NavItem, label));
-            await tester.pumpAndSettle();
-            expect(
-              tester.takeException(),
-              isNull,
-              reason: '$label should fit at $width px wide',
-            );
-          }
-        }
       },
     );
 

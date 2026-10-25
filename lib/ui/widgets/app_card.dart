@@ -22,6 +22,7 @@ class AppCard extends StatelessWidget {
   /// Defaults to 24 logical pixels on all sides (PRD §9.3).
   final EdgeInsetsGeometry padding;
 
+  /// Builds the shared surface card with its border and shadow.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,10 +30,7 @@ class AppCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
-        border: Border.all(
-          color: AppColors.border,
-          width: 1.0,
-        ),
+        border: Border.all(color: AppColors.border, width: 1.0),
         boxShadow: const [AppShadows.card],
       ),
       child: child,

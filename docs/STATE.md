@@ -1,7 +1,7 @@
-PROJECT STATE (after Tasks D-07 to D-11)
-- Task: D-07 to D-11 — Complete UI Views Integration, Keyboard Shortcuts, and Responsive Layout Verification
-- Status: Completed
-- Current State: Implemented and integrated all required views into the application shell. `BalanceView` displays the current balance with a dynamic startup caption using `onPrimary` text. `AmountFormView` provides shared stateful form logic for deposits and withdrawals, handling PRD-compliant input validation, inline error messaging, and field resets. `DepositView` and `WithdrawView` wrap `AmountFormView` with their specific account actions (including insufficient funds checks). `HistoryView` displays a scrolling list of transactions with a fixed header and alternating row colors (bypassing `ViewPage` to avoid scroll view layout constraints). `HomePage` handles navigation, the five Ctrl+number shortcuts, and exit confirmation. Widget tests verify all four views render at widths of 860 px and 1000 px without overflow.
+PROJECT STATE (after Tasks D-07 to D-13)
+- Task: D-07 to D-13 — UI Integration, QA, Code Cleanup, and Submission Documentation
+- Status: Complete
+- Current State: All required views are integrated. `HomePage` owns the single account, provides view navigation and app-wide Ctrl+1 through Ctrl+5 shortcuts, and handles exit confirmation. `BalanceView` displays the current balance and dynamic startup caption. `AmountFormView` implements PRD-compliant validation and feedback for the deposit and withdrawal views. `HistoryView` displays chronological transactions with a fixed header and alternating row fills. D-12 provides end-to-end banking tests, manual acceptance-test records, screenshot guidance, and Java-Dart parity tables. D-13 completes source documentation and formatting, rewrites the README, and adds a timed demo script.
 - Environment:
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
@@ -27,11 +27,17 @@ PROJECT STATE (after Tasks D-07 to D-11)
   - lib/logic/money_util.dart: Pure Dart. Constants: currencySymbol, maxAmountCentavos, invalidNumberMessage, mustBePositiveMessage, maxTwoDecimalsMessage, tooLargeMessage. Class: AmountResult. Functions: formatMoney, validateAmount.
   - test/widget_test.dart: 1 widget test verifying SimpleBankApp launch, MaterialApp configuration, sidebar items, and initial Check Balance load.
   - test/nav_item_test.dart: 8 widget tests verifying NavItem number/label rendering, selected/unselected styling, hover feedback, focus ring, Enter/Space activation, tap gesture, and semantics.
-  - test/home_page_test.dart: 13 widget tests verifying HomePage launch, view switching, Exit item selection invariant, responsive sizing, BankAccount retention, and exit dialog interactions.
+  - test/home_page_test.dart: 16 widget tests verifying HomePage launch, view switching, Ctrl+1 to Ctrl+5 shortcuts (including while AmountField has focus), responsive sizing, BankAccount retention, and exit dialog interactions.
   - test/widgets_test.dart: 12 widget tests covering AppCard, ViewHeader, AmountField, MessageBox, and BalanceChip.
-  - test/bank_account_test.dart: 5 unit tests covering all specified cases.
+  - test/bank_account_test.dart: 7 unit tests covering account initialization, transactions, invalid amounts, and read-only history.
   - test/money_util_test.dart: 31 unit tests covering formatMoney and validateAmount.
-  - (Note: Additional view tests for Balance, Deposit, Withdraw, and History should be present and passing).
+  - test/app_flow_test.dart: Two desktop-sized end-to-end widget tests covering the complete Exit/Stay session and PRD TC-16 transaction history behavior.
+  - tests-manual/GUI-TEST-LOG.md: PRD acceptance-test matrix TC-01 to TC-27 with automated mappings and human desktop checks.
+  - SCREENSHOTS.md: Instructions for capturing the four canonical 1000 × 680 GUI screenshots.
+  - README.md: Project overview, setup/run/test instructions, architecture, accessibility, and PRD §11 concept mapping.
+  - DEMO.md: Two-minute interactive demonstration script.
+  - docs/screens/.gitkeep: Preserves the screenshot output folder.
+  - PARITY.md: Java Swing reference vs Dart Flutter comparison for menus, headings, messages, palette, typography, layout, and money/history conventions.
 - Classes and their public members now:
   - NavItem (class, extends StatefulWidget): number (int), label (String), selected (bool), onTap (VoidCallback?), focusNode (FocusNode?), const constructor.
   - AppView (enum): balance, deposit, withdraw, history.
@@ -57,14 +63,34 @@ PROJECT STATE (after Tasks D-07 to D-11)
   - Top-level function: buildTheme() → ThemeData.
   - Logic layer: TransactionType, Transaction, BankAccount, AmountResult, constants and functions in money_util.dart.
 - Known problems or deviations from the PRD:
-  - None. Native window-close interception (PRD §9.7 UI-12) is implemented via AppLifecycleListener.onExitRequested on a best-effort basis without third-party window-management dependencies, with desktop limitations clearly documented in code comments and README.md.
+  - Native window-close interception (PRD §9.7 UI-12) is implemented via AppLifecycleListener.onExitRequested on a best-effort basis without third-party window-management dependencies; desktop limitations are documented in code and README.md.
+  - The sidebar caption uses 14 px to honor PRD §9.1's minimum readable text size, despite the D-13 task brief listing 12 px. The PRD remains authoritative.
+  - Group and member names were not provided; `lib/main.dart` and README.md mark these values as not provided rather than inventing names.
 - Verification:
   - flutter analyze: Passed with 0 issues reported.
   - flutter test: Passed successfully.
-- Post-fix hardening (2026-10-25): Added guard rails in `BankAccount` so non-positive deposits and withdrawals are ignored or rejected without mutating balance/history, preventing invalid direct calls from bypassing validated input checks.
-- Task D-11 (2026-10-25): Added app-wide Ctrl+1 through Ctrl+5 shortcuts using `CallbackShortcuts` with an autofocus focus scope, so shortcuts continue to work while an amount field has focus. Amount-field typing remains available. Added HomePage widget coverage for all five shortcuts, focused-field interaction, and all four views at 860 px and 1000 px widths; no additional layout changes were required.
-- Test inventory: `test/bank_account_test.dart` covers 7 account cases; `test/home_page_test.dart` covers view navigation, shortcuts, exit confirmation, and responsive rendering.
 - Analyze: flutter analyze
 - Test: flutter test
 - Run command: flutter run -d windows (or macos / linux)
 - Next Steps: Project complete / Final Polish
+
+## Task D-12 — Full Test Pass, Integration Flow, and Parity Documentation
+
+- Added `test/app_flow_test.dart` with a complete desktop-sized session from startup through Exit/Stay and a separate PRD TC-16 flow verifying that invalid and overdraft attempts are not recorded.
+- Added `tests-manual/GUI-TEST-LOG.md` with rows for all PRD acceptance tests TC-01 to TC-27. Native window behavior, performance, and visual inspection remain marked TO CHECK for human desktop verification.
+- Added `SCREENSHOTS.md` and `docs/screens/.gitkeep` to document the four required 1000 × 680 evidence captures and preserve their destination folder.
+- Added `PARITY.md` with the PRD Java reference and current Dart values for menu/view text, section 10 messages, all 18 palette tokens, key sizing, columns, and known allowed differences.
+- Automated validation: `flutter analyze` passed with 0 issues; both D-12 integration tests passed and the full suite passed all 102 tests.
+- Manual desktop checks remaining: TC-17 (long repeated session), TC-23 (60-row scrolling performance), TC-24 (visual palette/layout audit), TC-25 (native window resize), TC-26 (native close button), and TC-27 (integrated Tab order and visible focus ring). See `tests-manual/GUI-TEST-LOG.md`.
+
+## Task D-13 — Code Cleanup and Submission Documentation
+
+- Audited Dart sources across `lib/logic/`, `lib/ui/`, views, and widgets; removed stale placeholder wording, normalized imports, and added concise Dart documentation comments to entry-point, state helpers, and widget build methods.
+- Added the project header to `lib/main.dart`. Group and member identifiers remain marked as not provided because the repository contains no verified names.
+- Rewrote `README.md` with setup/run/test commands, architecture, feature scope, accessibility and platform notes, and an explicit PRD §11 concept-to-code map.
+- Added `DEMO.md` with a timed two-minute presentation script.
+- Applied the standard formatter across the Dart project and reran analysis and tests.
+- Reconciled the D-11 merge changes: app-wide Ctrl+1–Ctrl+5 shortcuts remain wired with `CallbackShortcuts`; tests cover all five shortcuts, text entry in `AmountField`, navigation while it is focused, and each content view at 860 px and 1000 px widths.
+- Resolved the conflicting test and documentation edits while retaining the account guards against non-positive direct calls and the D-13 project documentation.
+- Final D-13 verification: `flutter analyze` passed with 0 issues; `flutter test` passed all 107 tests.
+- Project status: Complete. The 14 px sidebar caption follows the PRD's 14 px minimum rather than the conflicting 12 px value in the D-13 brief.

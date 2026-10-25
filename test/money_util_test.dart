@@ -192,12 +192,15 @@ void main() {
       expect(r.errorMessage, tooLargeMessage);
     });
 
-    test('negative amount with more than two decimals returns must-be-positive', () {
-      // Validation order: step 3 (positive check) comes before step 4 (decimals).
-      final r = validateAmount('-1.234');
-      expect(r.isValid, isFalse);
-      expect(r.errorMessage, mustBePositiveMessage);
-    });
+    test(
+      'negative amount with more than two decimals returns must-be-positive',
+      () {
+        // Validation order: step 3 (positive check) comes before step 4 (decimals).
+        final r = validateAmount('-1.234');
+        expect(r.isValid, isFalse);
+        expect(r.errorMessage, mustBePositiveMessage);
+      },
+    );
 
     test('extremely long numeric string returns error without throwing', () {
       final longNumber = '9' * 100;
@@ -224,10 +227,16 @@ void main() {
       ];
       for (final input in inputs) {
         final r = validateAmount(input);
-        expect(r, isA<AmountResult>(),
-            reason: 'validateAmount("$input") must return an AmountResult');
-        expect(r.isValid, isFalse,
-            reason: 'validateAmount("$input") should be invalid');
+        expect(
+          r,
+          isA<AmountResult>(),
+          reason: 'validateAmount("$input") must return an AmountResult',
+        );
+        expect(
+          r.isValid,
+          isFalse,
+          reason: 'validateAmount("$input") should be invalid',
+        );
       }
     });
   });

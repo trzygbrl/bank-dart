@@ -56,9 +56,7 @@ void main() {
       await _enterAndWithdraw(tester, '2000');
 
       expect(
-        find.text(
-          'Withdrawal successful. New balance: ${formatMoney(300000)}',
-        ),
+        find.text('Withdrawal successful. New balance: ${formatMoney(300000)}'),
         findsOneWidget,
       );
       expect(_fieldText(tester), isEmpty);

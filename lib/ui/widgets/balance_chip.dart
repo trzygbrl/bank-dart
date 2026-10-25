@@ -8,14 +8,12 @@ import '../theme.dart';
 /// and [AppText.body] text matching PRD §9.2, §9.3, and §9.5.
 class BalanceChip extends StatelessWidget {
   /// Creates a [BalanceChip] with the specified [text].
-  const BalanceChip({
-    super.key,
-    required this.text,
-  });
+  const BalanceChip({super.key, required this.text});
 
   /// The label displayed inside the chip.
   final String text;
 
+  /// Builds the lavender-mist balance label.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,10 +25,7 @@ class BalanceChip extends StatelessWidget {
         color: AppColors.lavenderMist,
         borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
       ),
-      child: Text(
-        text,
-        style: AppText.body,
-      ),
+      child: Text(text, style: AppText.body),
     );
   }
 }

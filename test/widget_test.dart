@@ -38,10 +38,7 @@ void main() {
 
       // Verify initially on Check Balance placeholder view
       expect(find.byType(ViewHeader), findsOneWidget);
-      expect(
-        find.widgetWithText(ViewHeader, 'Check Balance'),
-        findsOneWidget,
-      );
+      expect(find.widgetWithText(ViewHeader, 'Check Balance'), findsOneWidget);
       expect(find.text('Your account at a glance'), findsOneWidget);
     },
   );
