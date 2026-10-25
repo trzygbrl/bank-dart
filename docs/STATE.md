@@ -1,27 +1,33 @@
 # Project State
 
-## PROJECT STATE (after Task D-01)
-- **Task:** D-01 — Project Setup and Skeleton
+## PROJECT STATE (after Task D-02)
+- **Task:** D-02 — Logic Model
 - **Status:** Completed
-- **Current State:** Flutter desktop project initialized at repository root. Minimal application skeleton displaying "Setup OK" with MaterialApp title 'Simple Bank' and debug banner disabled.
+- **Current State:** Banking logic model implemented with TransactionType enum, Transaction class, and BankAccount (ChangeNotifier). Unit tests cover starting balance, deposit+withdrawal, insufficient funds, exact-balance withdrawal, and read-only transaction list. Application skeleton from D-01 unchanged.
 - **Environment:**
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
   - Desktop Toolchain: Visual Studio Build Tools 2022 (17.14.20) for Windows desktop (`windows-x64`)
 - **Files in lib/ and test/:**
   - `lib/main.dart`: Entry point `main()` launching `MaterialApp` with `Scaffold` and centered "Setup OK" text.
-  - `test/widget_test.dart`: Widget test verifying app pumping, "Setup OK" text display, application title 'Simple Bank', and disabled debug banner.
+  - `lib/logic/transaction_type.dart`: Enhanced enum `TransactionType` with values `deposit` and `withdrawal`, each exposing a `label` string.
+  - `lib/logic/transaction.dart`: Immutable `Transaction` class with const constructor; fields: `type`, `amountCentavos`, `balanceAfterCentavos`.
+  - `lib/logic/bank_account.dart`: `BankAccount` extends `ChangeNotifier`. Top-level constant `startingBalanceCentavos = 500000`. Methods: `deposit`, `withdraw`, getters `balance` and `transactions`. Private helper `_recordTransaction`.
+  - `test/widget_test.dart`: Existing widget test (unchanged from D-01).
+  - `test/bank_account_test.dart`: 5 unit tests covering all specified cases.
 - **Classes and their public members now:**
-  - None (minimal entry point with `main()` function in `lib/main.dart`).
+  - `TransactionType` (enum): `deposit`, `withdrawal`, `label` (String getter).
+  - `Transaction` (class): `type` (TransactionType), `amountCentavos` (int), `balanceAfterCentavos` (int), const constructor with named required params.
+  - `BankAccount` (class, extends ChangeNotifier): `balance` (int getter), `transactions` (List<Transaction> getter, unmodifiable), `deposit(int amountCentavos)`, `withdraw(int amountCentavos)` → bool.
+  - Top-level constant: `startingBalanceCentavos` = 500000.
 - **Theme tokens and shared widgets that exist now:**
   - None (default Material 3 styling for initial skeleton).
 - **Known problems or deviations from the PRD:**
   - None.
 - **Verification:**
   - `flutter analyze`: Passed with 0 issues reported.
-  - `flutter test`: Passed (1/1 tests passed in `test/widget_test.dart`).
-  - `flutter run -d windows`: Built and launched successfully (`simple_bank_flutter.exe`), displaying "Setup OK" in window without debug banner.
+  - `flutter test`: Passed (6/6 tests: 1 widget test + 5 bank account unit tests).
 - **Analyze:** `flutter analyze`
 - **Test:** `flutter test`
 - **Run command:** `flutter run -d windows` (or macos / linux)
-- **Next Steps:** Task D-02: Logic model (Transaction, TransactionType, BankAccount)
+- **Next Steps:** Task D-03
