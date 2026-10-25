@@ -19,8 +19,13 @@ class BankAccount extends ChangeNotifier {
 
   /// Deposits [amountCentavos] into the account.
   ///
-  /// Callers must pass a positive, already-validated amount.
+  /// Non-positive values are ignored so the account cannot be manipulated with
+  /// invalid amounts from outside the validated UI flow.
   void deposit(int amountCentavos) {
+    if (amountCentavos <= 0) {
+      return;
+    }
+
     _balanceCentavos += amountCentavos;
     _recordTransaction(TransactionType.deposit, amountCentavos);
     notifyListeners();
@@ -28,12 +33,14 @@ class BankAccount extends ChangeNotifier {
 
   /// Withdraws [amountCentavos] from the account.
   ///
-  /// Returns `true` if the withdrawal succeeded, or `false` if the amount
-  /// exceeds the current balance. A failed withdrawal changes nothing.
+  /// Returns `true` if the withdrawal succeeded, or `false` if the amount is
+  /// invalid or exceeds the current balance. A failed withdrawal changes
+  /// nothing.
   bool withdraw(int amountCentavos) {
-    if (amountCentavos > _balanceCentavos) {
+    if (amountCentavos <= 0 || amountCentavos > _balanceCentavos) {
       return false;
     }
+
     _balanceCentavos -= amountCentavos;
     _recordTransaction(TransactionType.withdrawal, amountCentavos);
     notifyListeners();
