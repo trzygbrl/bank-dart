@@ -48,3 +48,8 @@ flutter run -d linux
 ```
 
 Developers should use the command corresponding to their operating system and configured desktop toolchain (for example, `flutter run -d windows` on Windows).
+
+## Window Close Button Support (UI-12)
+
+As specified in PRD §9.7 (UI-12) and Task D-06, window-close interception via Flutter's `AppLifecycleListener.onExitRequested` is implemented on a best-effort basis using Flutter SDK APIs without third-party window-management packages. On desktop platforms (such as Windows), native window-close events may bypass Flutter framework exit hooks depending on the embedder implementation. Reliable exit confirmation with the required modal dialog is fully supported via the sidebar "Exit" menu item.
+
