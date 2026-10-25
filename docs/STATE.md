@@ -1,9 +1,9 @@
 # Project State
 
-## PROJECT STATE (after Task D-02)
-- **Task:** D-02 — Logic Model
+## PROJECT STATE (after Task D-03)
+- **Task:** D-03 — Money Utilities and Unit Tests
 - **Status:** Completed
-- **Current State:** Banking logic model implemented with TransactionType enum, Transaction class, and BankAccount (ChangeNotifier). Unit tests cover starting balance, deposit+withdrawal, insufficient funds, exact-balance withdrawal, and read-only transaction list. Application skeleton from D-01 unchanged.
+- **Current State:** Money utility file added with constants (currencySymbol, maxAmountCentavos, four error-message constants from PRD §10), AmountResult class, formatMoney (comma-grouped peso string), and validateAmount (PRD §6.5 steps 1–5, integer-only arithmetic). Comprehensive unit tests added. All prior logic and widget code unchanged.
 - **Environment:**
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
@@ -13,21 +13,25 @@
   - `lib/logic/transaction_type.dart`: Enhanced enum `TransactionType` with values `deposit` and `withdrawal`, each exposing a `label` string.
   - `lib/logic/transaction.dart`: Immutable `Transaction` class with const constructor; fields: `type`, `amountCentavos`, `balanceAfterCentavos`.
   - `lib/logic/bank_account.dart`: `BankAccount` extends `ChangeNotifier`. Top-level constant `startingBalanceCentavos = 500000`. Methods: `deposit`, `withdraw`, getters `balance` and `transactions`. Private helper `_recordTransaction`.
+  - `lib/logic/money_util.dart`: Pure Dart. Constants: `currencySymbol`, `maxAmountCentavos`, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`. Class: `AmountResult`. Functions: `formatMoney`, `validateAmount`.
   - `test/widget_test.dart`: Existing widget test (unchanged from D-01).
-  - `test/bank_account_test.dart`: 5 unit tests covering all specified cases.
+  - `test/bank_account_test.dart`: 5 unit tests covering all specified cases (unchanged from D-02).
+  - `test/money_util_test.dart`: 24 unit tests covering formatMoney (6 cases) and validateAmount (valid inputs, must-be-positive, invalid-number, max-two-decimals, too-large, edge cases).
 - **Classes and their public members now:**
   - `TransactionType` (enum): `deposit`, `withdrawal`, `label` (String getter).
   - `Transaction` (class): `type` (TransactionType), `amountCentavos` (int), `balanceAfterCentavos` (int), const constructor with named required params.
   - `BankAccount` (class, extends ChangeNotifier): `balance` (int getter), `transactions` (List<Transaction> getter, unmodifiable), `deposit(int amountCentavos)`, `withdraw(int amountCentavos)` → bool.
-  - Top-level constant: `startingBalanceCentavos` = 500000.
+  - `AmountResult` (class): `centavos` (int?), `errorMessage` (String?), `isValid` (bool getter), factory constructors `ok` and `error`.
+  - Top-level constants: `startingBalanceCentavos` = 500000, `currencySymbol` = '\u20B1', `maxAmountCentavos` = 100000000000, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`.
+  - Top-level functions: `formatMoney(int centavos)` → String, `validateAmount(String? text)` → AmountResult.
 - **Theme tokens and shared widgets that exist now:**
   - None (default Material 3 styling for initial skeleton).
 - **Known problems or deviations from the PRD:**
   - None.
 - **Verification:**
   - `flutter analyze`: Passed with 0 issues reported.
-  - `flutter test`: Passed (6/6 tests: 1 widget test + 5 bank account unit tests).
+  - `flutter test`: Passed (30/30 tests: 1 widget test + 5 bank account tests + 24 money util tests).
 - **Analyze:** `flutter analyze`
 - **Test:** `flutter test`
 - **Run command:** `flutter run -d windows` (or macos / linux)
-- **Next Steps:** Task D-03
+- **Next Steps:** Task D-04
