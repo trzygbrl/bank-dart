@@ -1,7 +1,7 @@
-PROJECT STATE (after Tasks D-07 to D-10)
-- Task: D-07 to D-10 — Complete UI Views Integration (Check Balance, Deposit, Withdraw, Transaction History)
+PROJECT STATE (after Tasks D-07 to D-12)
+- Task: D-07 to D-12 — UI Integration, Keyboard Shortcuts, End-to-End QA, and Parity Documentation
 - Status: Completed
-- Current State: Implemented and integrated all required views into the application shell. `BalanceView` displays the current balance with a dynamic startup caption using `onPrimary` text. `AmountFormView` provides shared stateful form logic for deposits and withdrawals, handling PRD-compliant input validation, inline error messaging, and field resets. `DepositView` and `WithdrawView` wrap `AmountFormView` with their specific account actions (including insufficient funds checks). `HistoryView` displays a scrolling list of transactions with a fixed header and alternating row colors (bypassing `ViewPage` to avoid scroll view layout constraints). `HomePage` was updated to swap these real views in place of placeholders.
+- Current State: All required views are integrated. `HomePage` owns the single account, provides view navigation and app-wide Ctrl+1 through Ctrl+5 shortcuts, and handles exit confirmation. `BalanceView` displays the current balance and dynamic startup caption. `AmountFormView` implements PRD-compliant validation and feedback for the deposit and withdrawal views. `HistoryView` displays chronological transactions with a fixed header and alternating row fills. Task D-12 adds an end-to-end banking flow test, an acceptance-test log, a screenshot guide, and Java-Dart parity documentation.
 - Environment:
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
@@ -27,11 +27,15 @@ PROJECT STATE (after Tasks D-07 to D-10)
   - lib/logic/money_util.dart: Pure Dart. Constants: currencySymbol, maxAmountCentavos, invalidNumberMessage, mustBePositiveMessage, maxTwoDecimalsMessage, tooLargeMessage. Class: AmountResult. Functions: formatMoney, validateAmount.
   - test/widget_test.dart: 1 widget test verifying SimpleBankApp launch, MaterialApp configuration, sidebar items, and initial Check Balance load.
   - test/nav_item_test.dart: 8 widget tests verifying NavItem number/label rendering, selected/unselected styling, hover feedback, focus ring, Enter/Space activation, tap gesture, and semantics.
-  - test/home_page_test.dart: 13 widget tests verifying HomePage launch, view switching, Exit item selection invariant, responsive sizing, BankAccount retention, and exit dialog interactions.
+  - test/home_page_test.dart: 16 widget tests verifying HomePage launch, view switching, Ctrl+1 to Ctrl+5 shortcuts, responsive sizing, BankAccount retention, and exit dialog interactions.
   - test/widgets_test.dart: 12 widget tests covering AppCard, ViewHeader, AmountField, MessageBox, and BalanceChip.
-  - test/bank_account_test.dart: 5 unit tests covering all specified cases.
+  - test/bank_account_test.dart: 7 unit tests covering account initialization, transactions, invalid amounts, and read-only history.
   - test/money_util_test.dart: 31 unit tests covering formatMoney and validateAmount.
-  - (Note: Additional view tests for Balance, Deposit, Withdraw, and History should be present and passing).
+  - test/app_flow_test.dart: Two desktop-sized end-to-end widget tests covering the complete Exit/Stay session and PRD TC-16 transaction history behavior.
+  - tests-manual/GUI-TEST-LOG.md: PRD acceptance-test matrix TC-01 to TC-27 with automated mappings and human desktop checks.
+  - SCREENSHOTS.md: Instructions for capturing the four canonical 1000 × 680 GUI screenshots.
+  - docs/screens/.gitkeep: Preserves the screenshot output folder.
+  - PARITY.md: Java Swing reference vs Dart Flutter comparison for menus, headings, messages, palette, typography, layout, and money/history conventions.
 - Classes and their public members now:
   - NavItem (class, extends StatefulWidget): number (int), label (String), selected (bool), onTap (VoidCallback?), focusNode (FocusNode?), const constructor.
   - AppView (enum): balance, deposit, withdraw, history.
@@ -59,9 +63,19 @@ PROJECT STATE (after Tasks D-07 to D-10)
 - Known problems or deviations from the PRD:
   - None. Native window-close interception (PRD §9.7 UI-12) is implemented via AppLifecycleListener.onExitRequested on a best-effort basis without third-party window-management dependencies, with desktop limitations clearly documented in code comments and README.md.
 - Verification:
-  - flutter analyze: Passed with 0 issues reported.
-  - flutter test: Passed successfully.
+  - Baseline before D-12 additions: `flutter analyze` passed with 0 issues; `flutter test` passed all 100 tests.
+  - D-12 focused integration: `flutter test test/app_flow_test.dart` passed (2 tests).
+  - D-12 final verification: `flutter analyze` reported 0 issues; `flutter test` passed all 102 tests.
 - Analyze: flutter analyze
 - Test: flutter test
 - Run command: flutter run -d windows (or macos / linux)
 - Next Steps: Project complete / Final Polish
+
+## Task D-12 — Full Test Pass, Integration Flow, and Parity Documentation
+
+- Added `test/app_flow_test.dart` with a complete desktop-sized session from startup through Exit/Stay and a separate PRD TC-16 flow verifying that invalid and overdraft attempts are not recorded.
+- Added `tests-manual/GUI-TEST-LOG.md` with rows for all PRD acceptance tests TC-01 to TC-27. Native window behavior, performance, and visual inspection remain marked TO CHECK for human desktop verification.
+- Added `SCREENSHOTS.md` and `docs/screens/.gitkeep` to document the four required 1000 × 680 evidence captures and preserve their destination folder.
+- Added `PARITY.md` with the PRD Java reference and current Dart values for menu/view text, section 10 messages, all 18 palette tokens, key sizing, columns, and known allowed differences.
+- Automated validation: `flutter analyze` passed with 0 issues; both D-12 integration tests passed and the full suite passed all 102 tests.
+- Manual desktop checks remaining: TC-17 (long repeated session), TC-23 (60-row scrolling performance), TC-24 (visual palette/layout audit), TC-25 (native window resize), TC-26 (native close button), and TC-27 (integrated Tab order and visible focus ring). See `tests-manual/GUI-TEST-LOG.md`.
