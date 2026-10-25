@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'ui/theme.dart';
+
 void main() {
   runApp(
-    const MaterialApp(
+    MaterialApp(
       title: 'Simple Bank',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text('Setup OK'),
-        ),
-      ),
+      theme: buildTheme(),
+      home: const Scaffold(body: Center(child: Text('Setup OK'))),
     ),
   );
 }
