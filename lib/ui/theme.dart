@@ -61,6 +61,9 @@ class AppColors {
 
   /// Unselected sidebar text.
   static const Color navText = Color(0xFFE4DEF5);
+
+  /// Card soft shadow approximating 10% black opacity (PRD §9.3).
+  static const Color cardShadow = Color(0x1A000000);
 }
 
 /// Spacing, radius, and sizing tokens defined in PRD §9.3 and §9.4.
@@ -70,6 +73,7 @@ class AppSpacing {
   // Spacing scale
   static const double sp4 = 4.0;
   static const double sp8 = 8.0;
+  static const double sp12 = 12.0;
   static const double sp16 = 16.0;
   static const double sp24 = 24.0;
   static const double sp32 = 32.0;
@@ -83,6 +87,7 @@ class AppSpacing {
   static const double fieldHeight = 44.0;
   static const double navItemHeight = 48.0;
   static const double tableRowHeight = 40.0;
+  static const double messageMinHeight = 48.0;
 
   // Layout
   static const double sidebarWidth = 240.0;
@@ -141,6 +146,18 @@ class AppText {
     fontSize: 40,
     fontWeight: FontWeight.bold,
     color: AppColors.onPrimary,
+  );
+}
+
+/// Centralized elevation and shadow definitions (PRD §9.3).
+class AppShadows {
+  AppShadows._();
+
+  /// Soft card shadow approximating 10% black, blur 12, offset (0, 2) (PRD §9.3).
+  static const BoxShadow card = BoxShadow(
+    color: AppColors.cardShadow,
+    blurRadius: 12.0,
+    offset: Offset(0.0, 2.0),
   );
 }
 
@@ -254,6 +271,11 @@ ThemeData buildTheme() {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.surface,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp16,
+        vertical: 10.0,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
         borderSide: const BorderSide(color: AppColors.border, width: 1.0),

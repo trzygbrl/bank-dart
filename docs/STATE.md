@@ -1,42 +1,54 @@
 # Project State
 
-## PROJECT STATE (after Task D-04)
-- **Task:** D-04 — Theme System
+## PROJECT STATE (after Task D-05)
+- **Task:** D-05 — Reusable Styled Widgets
 - **Status:** Completed
-- **Current State:** Centralized application theme implemented in `lib/ui/theme.dart` with design tokens from PRD §9.2 and §9.3 (`AppColors`, `AppSpacing`, `AppText`, `buildTheme()`). Integrated `buildTheme()` into `lib/main.dart` with mint-cream background (`#F5FFFA`) and centered "Setup OK" placeholder intact. All existing banking logic, money utilities, and tests remain intact.
+- **Current State:** Implemented all five reusable styled widgets under `lib/ui/widgets/` (`AppCard`, `ViewHeader`, `AmountField`, `MessageBox`, `BalanceChip`) according to PRD §9.2, §9.3, §9.5, §9.6, and §9.7. Added centralized tokens `AppColors.cardShadow`, `AppSpacing.sp12`, `AppSpacing.messageMinHeight`, and `AppShadows` to `lib/ui/theme.dart`. Implemented temporary interactive demo in `lib/main.dart` with all seven required components inside a single `AppCard`. All prior banking logic, money utilities, and tests remain intact.
 - **Environment:**
   - Flutter: 3.47.8 (channel stable)
   - Dart SDK: 3.13.7
   - Desktop Toolchain: Visual Studio Community 2026 (requires C++ desktop development workload for Windows desktop build)
 - **Files in lib/ and test/:**
-  - `lib/main.dart`: Entry point `main()` launching `MaterialApp` with `theme: buildTheme()`, `Scaffold`, and centered "Setup OK" text.
-  - `lib/ui/theme.dart`: Centralized theme definitions (`AppColors`, `AppSpacing`, `AppText`, `buildTheme()`).
+  - `lib/main.dart`: Entry point `main()` launching `SimpleBankApp` with `theme: buildTheme()`, `Scaffold`, and `WidgetDemoScreen` inside an `AppCard`.
+  - `lib/ui/theme.dart`: Centralized theme definitions (`AppColors`, `AppSpacing`, `AppShadows`, `AppText`, `buildTheme()`).
+  - `lib/ui/widgets/app_card.dart`: `AppCard` widget with 12 px radius, 1 px border, 24 px default padding, and soft card shadow.
+  - `lib/ui/widgets/view_header.dart`: `ViewHeader` widget with `AppText.viewTitle`, `AppText.subtitle`, and 24 px bottom space.
+  - `lib/ui/widgets/amount_field.dart`: `AmountField` widget with 44 px height, `currencySymbol` prefix, dynamic error/focus borders, and accessibility semantics.
+  - `lib/ui/widgets/message_box.dart`: `MessageBox` widget with `MessageBoxKind` (`none`, `error`, `success`), 48 px minimum height preservation, and live region semantics.
+  - `lib/ui/widgets/balance_chip.dart`: `BalanceChip` widget with `lavenderMist` background, 8 px radius, and body text.
   - `lib/logic/transaction_type.dart`: Enhanced enum `TransactionType` with values `deposit` and `withdrawal`, each exposing a `label` string.
   - `lib/logic/transaction.dart`: Immutable `Transaction` class with const constructor; fields: `type`, `amountCentavos`, `balanceAfterCentavos`.
   - `lib/logic/bank_account.dart`: `BankAccount` extends `ChangeNotifier`. Top-level constant `startingBalanceCentavos = 500000`. Methods: `deposit`, `withdraw`, getters `balance` and `transactions`. Private helper `_recordTransaction`.
   - `lib/logic/money_util.dart`: Pure Dart. Constants: `currencySymbol`, `maxAmountCentavos`, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`. Class: `AmountResult`. Functions: `formatMoney`, `validateAmount`.
-  - `test/widget_test.dart`: Existing widget test (unchanged from D-01).
+  - `test/widget_test.dart`: 2 widget tests verifying the demo screen launch, component composition within `AppCard`, and interactive button/field behavior.
+  - `test/widgets_test.dart`: 12 widget tests covering `AppCard`, `ViewHeader`, `AmountField`, `MessageBox`, and `BalanceChip`.
   - `test/bank_account_test.dart`: 5 unit tests covering all specified cases (unchanged from D-02).
   - `test/money_util_test.dart`: 24 unit tests covering formatMoney (6 cases) and validateAmount (valid inputs, must-be-positive, invalid-number, max-two-decimals, too-large, edge cases).
 - **Classes and their public members now:**
-  - `AppColors` (class): 18 static const Color tokens (`primary`, `primaryDark`, `primaryDeep`, `lavender`, `lavenderMist`, `background`, `surface`, `mint`, `success`, `successBg`, `error`, `errorBg`, `withdrawal`, `textPrimary`, `textMuted`, `border`, `onPrimary`, `navText`).
-  - `AppSpacing` (class): Spacing, radius, height, and width static const double constants (`sp4`, `sp8`, `sp16`, `sp24`, `sp32`, `radiusCard`, `radiusControl`, `buttonHeight`, `fieldHeight`, `navItemHeight`, `tableRowHeight`, `sidebarWidth`).
+  - `AppCard` (class, extends StatelessWidget): `child` (Widget), `padding` (EdgeInsetsGeometry, default 24px), const constructor.
+  - `ViewHeader` (class, extends StatelessWidget): `title` (String), `subtitle` (String), const constructor.
+  - `AmountField` (class, extends StatelessWidget): `controller` (TextEditingController), `focusNode` (FocusNode), `hasError` (bool), `semanticsLabel` (String), `hintText` (String, default '0.00'), `onChanged` (ValueChanged<String>?), `onSubmitted` (ValueChanged<String>?), const constructor.
+  - `MessageBoxKind` (enum): `none`, `error`, `success`.
+  - `MessageBox` (class, extends StatelessWidget): `kind` (MessageBoxKind), `text` (String), const constructor.
+  - `BalanceChip` (class, extends StatelessWidget): `text` (String), const constructor.
+  - `SimpleBankApp` (class, extends StatelessWidget): const constructor.
+  - `WidgetDemoScreen` (class, extends StatefulWidget): const constructor.
+  - `AppColors` (class): 19 static const Color tokens (`primary`, `primaryDark`, `primaryDeep`, `lavender`, `lavenderMist`, `background`, `surface`, `mint`, `success`, `successBg`, `error`, `errorBg`, `withdrawal`, `textPrimary`, `textMuted`, `border`, `onPrimary`, `navText`, `cardShadow`).
+  - `AppSpacing` (class): Spacing (`sp4`, `sp8`, `sp12`, `sp16`, `sp24`, `sp32`), radii (`radiusCard`, `radiusControl`), heights (`buttonHeight`, `fieldHeight`, `navItemHeight`, `tableRowHeight`, `messageMinHeight`), layout (`sidebarWidth`).
+  - `AppShadows` (class): `card` (static const BoxShadow).
   - `AppText` (class): Static TextStyle getters (`brand`, `viewTitle`, `subtitle`, `cardTitle`, `body`, `bodyBold`, `balance`).
   - Top-level function: `buildTheme()` → `ThemeData`.
-  - `TransactionType` (enum): `deposit`, `withdrawal`, `label` (String getter).
-  - `Transaction` (class): `type` (TransactionType), `amountCentavos` (int), `balanceAfterCentavos` (int), const constructor with named required params.
-  - `BankAccount` (class, extends ChangeNotifier): `balance` (int getter), `transactions` (List<Transaction> getter, unmodifiable), `deposit(int amountCentavos)`, `withdraw(int amountCentavos)` → bool.
-  - `AmountResult` (class): `centavos` (int?), `errorMessage` (String?), `isValid` (bool getter), factory constructors `ok` and `error`.
-  - Top-level constants: `startingBalanceCentavos` = 500000, `currencySymbol` = '\u20B1', `maxAmountCentavos` = 100000000000, `invalidNumberMessage`, `mustBePositiveMessage`, `maxTwoDecimalsMessage`, `tooLargeMessage`.
-  - Top-level functions: `formatMoney(int centavos)` → String, `validateAmount(String? text)` → AmountResult.
+  - Prior logic classes: `TransactionType`, `Transaction`, `BankAccount`, `AmountResult`, top-level constants and functions in `money_util.dart`.
 - **Theme tokens and shared widgets that exist now:**
-  - Centralized theme tokens in `lib/ui/theme.dart`: full ColorScheme.light, filledButtonTheme, outlinedButtonTheme, inputDecorationTheme, dialogTheme, scrollbarTheme, dividerTheme, focusColor, highlightColor.
+  - Centralized theme tokens in `lib/ui/theme.dart`: full ColorScheme.light, filledButtonTheme, outlinedButtonTheme, inputDecorationTheme (with density and contentPadding), dialogTheme, scrollbarTheme, dividerTheme, focusColor, highlightColor, `AppShadows.card`.
+  - Shared widgets in `lib/ui/widgets/`: `AppCard`, `ViewHeader`, `AmountField`, `MessageBox`, `BalanceChip`.
 - **Known problems or deviations from the PRD:**
-  - Resolved conflict: The prompt table specified `brand` color as `AppColors.primaryDeep`, whereas PRD §9.3 specifies `onPrimary` (`#FFFFFF`). As confirmed per AGENTS.md Rule 1 ("the PRD wins"), `AppColors.onPrimary` is used for `AppText.brand`.
+  - None.
 - **Verification:**
   - `flutter analyze`: Passed with 0 issues reported.
-  - `flutter test`: Passed (37/37 test assertions across 3 test suites: 1 widget test + 5 bank account tests + 31 money util tests).
+  - `flutter test`: Passed (50/50 tests across 4 test suites: 2 widget tests + 12 reusable widget tests + 5 bank account tests + 31 money util tests).
 - **Analyze:** `flutter analyze`
 - **Test:** `flutter test`
 - **Run command:** `flutter run -d windows` (or macos / linux)
-- **Next Steps:** Task D-05
+- **Next Steps:** Task D-06
+
