@@ -16,6 +16,7 @@ class HistoryView extends StatelessWidget {
   /// The account whose history is displayed.
   final BankAccount account;
 
+  /// Builds the empty state or a fixed-header, scrollable transaction table.
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -43,33 +44,33 @@ class HistoryView extends StatelessWidget {
                     child: AppCard(
                       child: transactions.isEmpty
                           ? Center(
-                        child: Text(
-                          'No transactions yet.',
-                          style: AppText.subtitle,
-                        ),
-                      )
+                              child: Text(
+                                'No transactions yet.',
+                                style: AppText.subtitle,
+                              ),
+                            )
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${transactions.length} transaction(s)',
-                            style: AppText.subtitle,
-                          ),
-                          const SizedBox(height: AppSpacing.sp16),
-                          _buildTableHeader(),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: transactions.length,
-                              itemBuilder: (context, index) {
-                                return _buildTableRow(
-                                  index,
-                                  transactions[index],
-                                );
-                              },
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${transactions.length} transaction(s)',
+                                  style: AppText.subtitle,
+                                ),
+                                const SizedBox(height: AppSpacing.sp16),
+                                _buildTableHeader(),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: transactions.length,
+                                    itemBuilder: (context, index) {
+                                      return _buildTableRow(
+                                        index,
+                                        transactions[index],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -81,6 +82,7 @@ class HistoryView extends StatelessWidget {
     );
   }
 
+  /// Builds the fixed table header above the independently scrolling rows.
   Widget _buildTableHeader() {
     return Container(
       height: 40,
@@ -123,6 +125,7 @@ class HistoryView extends StatelessWidget {
     );
   }
 
+  /// Builds one numbered row using the transaction's saved values.
   Widget _buildTableRow(int index, Transaction tx) {
     // Alternating rows: even = surface, odd = lavenderMist
     final bool isEven = index.isEven;
@@ -134,10 +137,7 @@ class HistoryView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
       child: Row(
         children: [
-          Expanded(
-            flex: 1,
-            child: Text('${index + 1}', style: AppText.body),
-          ),
+          Expanded(flex: 1, child: Text('${index + 1}', style: AppText.body)),
           Expanded(
             flex: 2,
             child: Text(

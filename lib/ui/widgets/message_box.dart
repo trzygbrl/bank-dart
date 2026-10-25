@@ -21,11 +21,7 @@ enum MessageBoxKind {
 /// announcing stale messages to assistive technology.
 class MessageBox extends StatelessWidget {
   /// Creates a [MessageBox] of the given [kind] displaying [text].
-  const MessageBox({
-    super.key,
-    required this.kind,
-    required this.text,
-  });
+  const MessageBox({super.key, required this.kind, required this.text});
 
   /// The category of message to display.
   final MessageBoxKind kind;
@@ -33,6 +29,7 @@ class MessageBox extends StatelessWidget {
   /// The text message to display.
   final String text;
 
+  /// Builds inline feedback or preserves the reserved empty message space.
   @override
   Widget build(BuildContext context) {
     if (kind == MessageBoxKind.none) {
@@ -72,16 +69,10 @@ class MessageBox extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
-          border: Border.all(
-            color: borderColor,
-            width: 1.0,
-          ),
+          border: Border.all(color: borderColor, width: 1.0),
         ),
         alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: AppText.body.copyWith(color: textColor),
-        ),
+        child: Text(text, style: AppText.body.copyWith(color: textColor)),
       ),
     );
   }

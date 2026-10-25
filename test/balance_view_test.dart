@@ -15,29 +15,27 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: buildTheme(),
-          home: const HomePage(),
-        ),
+        MaterialApp(theme: buildTheme(), home: const HomePage()),
       );
       await tester.pumpAndSettle();
     }
 
-    testWidgets('shows the starting balance and the startup caption at launch', (
-      WidgetTester tester,
-    ) async {
-      await pumpHome(tester);
+    testWidgets(
+      'shows the starting balance and the startup caption at launch',
+      (WidgetTester tester) async {
+        await pumpHome(tester);
 
-      expect(find.text('Current balance'), findsOneWidget);
-      expect(find.text(formatMoney(startingBalanceCentavos)), findsOneWidget);
-      expect(
-        find.text(
-          'Account initialized. Current balance: '
-          '${formatMoney(startingBalanceCentavos)}',
-        ),
-        findsOneWidget,
-      );
-    });
+        expect(find.text('Current balance'), findsOneWidget);
+        expect(find.text(formatMoney(startingBalanceCentavos)), findsOneWidget);
+        expect(
+          find.text(
+            'Account initialized. Current balance: '
+            '${formatMoney(startingBalanceCentavos)}',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('shows the plain caption after leaving and coming back', (
       WidgetTester tester,
@@ -50,9 +48,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(
-          'Current balance: ${formatMoney(startingBalanceCentavos)}',
-        ),
+        find.text('Current balance: ${formatMoney(startingBalanceCentavos)}'),
         findsOneWidget,
       );
       expect(find.textContaining('Account initialized'), findsNothing);
@@ -62,16 +58,17 @@ void main() {
       expect(account.transactions, isEmpty);
     });
 
-    testWidgets('keeps the startup caption when Check Balance is clicked while open', (
-      WidgetTester tester,
-    ) async {
-      await pumpHome(tester);
+    testWidgets(
+      'keeps the startup caption when Check Balance is clicked while open',
+      (WidgetTester tester) async {
+        await pumpHome(tester);
 
-      await tester.tap(find.widgetWithText(NavItem, 'Check Balance'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(NavItem, 'Check Balance'));
+        await tester.pumpAndSettle();
 
-      expect(find.textContaining('Account initialized'), findsOneWidget);
-    });
+        expect(find.textContaining('Account initialized'), findsOneWidget);
+      },
+    );
 
     testWidgets('updates when the account balance changes', (
       WidgetTester tester,

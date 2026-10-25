@@ -11,11 +11,7 @@ import '../theme.dart';
 /// Transaction History table, which scrolls its own rows).
 class ViewPage extends StatelessWidget {
   /// Creates a [ViewPage] around [child].
-  const ViewPage({
-    super.key,
-    required this.child,
-    this.scrollable = true,
-  });
+  const ViewPage({super.key, required this.child, this.scrollable = true});
 
   /// The view content.
   final Widget child;
@@ -23,6 +19,7 @@ class ViewPage extends StatelessWidget {
   /// Whether the page scrolls vertically as a whole.
   final bool scrollable;
 
+  /// Applies standard padding and optional page-level scrolling.
   @override
   Widget build(BuildContext context) {
     if (!scrollable) {
@@ -33,10 +30,7 @@ class ViewPage extends StatelessWidget {
     }
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.sp32),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: child,
-      ),
+      child: Align(alignment: Alignment.topLeft, child: child),
     );
   }
 }

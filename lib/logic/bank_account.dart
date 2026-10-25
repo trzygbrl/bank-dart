@@ -19,7 +19,8 @@ class BankAccount extends ChangeNotifier {
 
   /// Deposits [amountCentavos] into the account.
   ///
-  /// Callers must pass a positive, already-validated amount.
+  /// The UI validates values before calling this method; callers must pass a
+  /// positive amount in centavos.
   void deposit(int amountCentavos) {
     _balanceCentavos += amountCentavos;
     _recordTransaction(TransactionType.deposit, amountCentavos);
@@ -28,7 +29,7 @@ class BankAccount extends ChangeNotifier {
 
   /// Withdraws [amountCentavos] from the account.
   ///
-  /// Returns `true` if the withdrawal succeeded, or `false` if the amount
+  /// Returns `true` when the amount is within the balance, or `false` when it
   /// exceeds the current balance. A failed withdrawal changes nothing.
   bool withdraw(int amountCentavos) {
     if (amountCentavos > _balanceCentavos) {
@@ -41,6 +42,7 @@ class BankAccount extends ChangeNotifier {
   }
 
   /// Records a transaction after the balance has already been updated.
+  /// Appends a record using the balance that resulted from the action.
   void _recordTransaction(TransactionType type, int amountCentavos) {
     _transactions.add(
       Transaction(

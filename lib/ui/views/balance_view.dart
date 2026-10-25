@@ -27,6 +27,7 @@ class BalanceView extends StatelessWidget {
   /// Whether to show the first-display startup caption.
   final bool showStartupCaption;
 
+  /// Builds the live balance card and the appropriate account caption.
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -61,7 +62,9 @@ class BalanceView extends StatelessWidget {
                     children: [
                       Text(
                         'Current balance',
-                        style: AppText.body.copyWith(color: AppColors.onPrimary),
+                        style: AppText.body.copyWith(
+                          color: AppColors.onPrimary,
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.sp8),
                       Text(balanceText, style: AppText.balance),

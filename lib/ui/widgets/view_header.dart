@@ -7,11 +7,7 @@ import '../theme.dart';
 /// Automatically reserves 24 logical pixels of space below the header.
 class ViewHeader extends StatelessWidget {
   /// Creates a [ViewHeader] with the given [title] and [subtitle].
-  const ViewHeader({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
+  const ViewHeader({super.key, required this.title, required this.subtitle});
 
   /// The primary heading displayed using [AppText.viewTitle].
   final String title;
@@ -19,6 +15,7 @@ class ViewHeader extends StatelessWidget {
   /// The secondary text displayed beneath the title using [AppText.subtitle].
   final String subtitle;
 
+  /// Builds the title and subtitle with the standard spacing.
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -27,14 +24,8 @@ class ViewHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            title,
-            style: AppText.viewTitle,
-          ),
-          Text(
-            subtitle,
-            style: AppText.subtitle,
-          ),
+          Text(title, style: AppText.viewTitle),
+          Text(subtitle, style: AppText.subtitle),
         ],
       ),
     );

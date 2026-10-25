@@ -2,15 +2,15 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../logic/bank_account.dart';
 import 'nav_item.dart';
 import 'theme.dart';
 import 'views/balance_view.dart';
 import 'views/deposit_view.dart';
-import 'views/withdraw_view.dart';
-import 'widgets/view_page.dart';
 import 'views/history_view.dart';
+import 'views/withdraw_view.dart';
 
 /// Available application views for Simple Bank.
 enum AppView {
@@ -29,14 +29,11 @@ enum AppView {
 
 /// Main desktop application shell for Simple Bank.
 ///
-/// Contains the sidebar navigation, content area with placeholder views,
-/// and exit confirmation dialog handling.
+/// Owns the in-memory account and coordinates navigation, active views,
+/// keyboard shortcuts, and exit confirmation.
 class HomePage extends StatefulWidget {
   /// Creates the [HomePage] widget.
-  const HomePage({
-    super.key,
-    this.onExit,
-  });
+  const HomePage({super.key, this.onExit});
 
   /// Optional exit callback used for testing termination behavior safely.
   ///
@@ -47,6 +44,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+/// Owns the account session, selected view, and native-exit lifecycle listener.
 class _HomePageState extends State<HomePage> {
   late final BankAccount _account;
   AppView _selectedView = AppView.balance;
@@ -66,9 +64,10 @@ class _HomePageState extends State<HomePage> {
   // The sidebar Exit item (confirmExit) provides the reliable, fully-tested exit flow.
   late final AppLifecycleListener _lifecycleListener;
 
-  /// Exposes the bank account owned by this page for inspection or view integration.
+  /// Returns the account shared by every view during this app session.
   BankAccount get account => _account;
 
+  /// Initializes the account and subscribes to supported exit requests.
   @override
   void initState() {
     super.initState();
@@ -78,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Releases the lifecycle listener and account owned by this state.
   @override
   void dispose() {
     _lifecycleListener.dispose();
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
     showView(AppView.history);
   }
 
-  /// Displays the modal exit confirmation dialog and returns true if confirmed.
+  /// Displays the modal exit confirmation and returns whether Exit was chosen.
   Future<bool> _showExitConfirmationDialog() async {
     if (!mounted) {
       return false;
@@ -153,7 +153,9 @@ class _HomePageState extends State<HomePage> {
     return result ?? false;
   }
 
-  /// Shows the exit confirmation dialog and terminates the application if confirmed.
+  /// Shows confirmation and exits when accepted.
+  ///
+  /// Uses [HomePage.onExit] in tests; production uses `exit(0)`.
   Future<void> confirmExit() async {
     if (_isExitDialogOpen) {
       return;
@@ -189,8 +191,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Builds the content for the selected view. One branch per view; each view
-  /// owns its own padding and scrolling through [ViewPage].
+  /// Returns the active view; each view manages its own padding and scrolling.
   Widget _buildView() {
     return switch (_selectedView) {
       AppView.balance => BalanceView(
@@ -199,111 +200,126 @@ class _HomePageState extends State<HomePage> {
       ),
       AppView.deposit => DepositView(account: _account),
       AppView.withdraw => WithdrawView(account: _account),
-      AppView.history => HistoryView(account: _account), // Replaced placeholder
+      AppView.history => HistoryView(account: _account),
     };
   }
 
+  /// Renders the sidebar and active view in the application shell.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Sidebar: 240 px fixed width
-          Container(
-            width: AppSpacing.sidebarWidth,
-            color: AppColors.primaryDark,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.sp24,
-                              AppSpacing.sp32,
-                              AppSpacing.sp24,
-                              AppSpacing.sp24,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Simple Bank',
-                                  style: AppText.brand,
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        const SingleActivator(LogicalKeyboardKey.digit1, control: true):
+            handleCheckBalance,
+        const SingleActivator(LogicalKeyboardKey.digit2, control: true):
+            openDeposit,
+        const SingleActivator(LogicalKeyboardKey.digit3, control: true):
+            openWithdraw,
+        const SingleActivator(LogicalKeyboardKey.digit4, control: true):
+            handleViewHistory,
+        const SingleActivator(LogicalKeyboardKey.digit5, control: true):
+            confirmExit,
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Sidebar: 240 px fixed width
+              Container(
+                width: AppSpacing.sidebarWidth,
+                color: AppColors.primaryDark,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  AppSpacing.sp24,
+                                  AppSpacing.sp32,
+                                  AppSpacing.sp24,
+                                  AppSpacing.sp24,
                                 ),
-                                const SizedBox(height: AppSpacing.sp4),
-                                const Text(
-                                  'Personal Banking',
-                                  style: TextStyle(
-                                    color: AppColors.navText,
-                                    fontSize: 14.0,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Simple Bank', style: AppText.brand),
+                                    const SizedBox(height: AppSpacing.sp4),
+                                    const Text(
+                                      'Personal Banking',
+                                      style: TextStyle(
+                                        color: AppColors.navText,
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              NavItem(
+                                number: 1,
+                                label: 'Check Balance',
+                                selected: _selectedView == AppView.balance,
+                                onTap: handleCheckBalance,
+                              ),
+                              NavItem(
+                                number: 2,
+                                label: 'Deposit Money',
+                                selected: _selectedView == AppView.deposit,
+                                onTap: openDeposit,
+                              ),
+                              NavItem(
+                                number: 3,
+                                label: 'Withdraw Money',
+                                selected: _selectedView == AppView.withdraw,
+                                onTap: openWithdraw,
+                              ),
+                              NavItem(
+                                number: 4,
+                                label: 'View Transaction History',
+                                selected: _selectedView == AppView.history,
+                                onTap: handleViewHistory,
+                              ),
+                              const Spacer(),
+                              const Divider(
+                                color: AppColors.border,
+                                height: 1.0,
+                                thickness: 1.0,
+                              ),
+                              const SizedBox(height: AppSpacing.sp8),
+                              NavItem(
+                                number: 5,
+                                label: 'Exit',
+                                selected: false,
+                                onTap: confirmExit,
+                              ),
+                              const SizedBox(height: AppSpacing.sp16),
+                            ],
                           ),
-                          NavItem(
-                            number: 1,
-                            label: 'Check Balance',
-                            selected: _selectedView == AppView.balance,
-                            onTap: handleCheckBalance,
-                          ),
-                          NavItem(
-                            number: 2,
-                            label: 'Deposit Money',
-                            selected: _selectedView == AppView.deposit,
-                            onTap: openDeposit,
-                          ),
-                          NavItem(
-                            number: 3,
-                            label: 'Withdraw Money',
-                            selected: _selectedView == AppView.withdraw,
-                            onTap: openWithdraw,
-                          ),
-                          NavItem(
-                            number: 4,
-                            label: 'View Transaction History',
-                            selected: _selectedView == AppView.history,
-                            onTap: handleViewHistory,
-                          ),
-                          const Spacer(),
-                          const Divider(
-                            color: AppColors.border,
-                            height: 1.0,
-                            thickness: 1.0,
-                          ),
-                          const SizedBox(height: AppSpacing.sp8),
-                          NavItem(
-                            number: 5,
-                            label: 'Exit',
-                            selected: false,
-                            onTap: confirmExit,
-                          ),
-                          const SizedBox(height: AppSpacing.sp16),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
+              ),
+              // Content area: each view applies its own padding and scrolling.
+              Expanded(
+                child: Container(
+                  color: AppColors.background,
+                  child: _buildView(),
+                ),
+              ),
+            ],
           ),
-          // Content area: each view applies its own padding and scrolling.
-          Expanded(
-            child: Container(
-              color: AppColors.background,
-              child: _buildView(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

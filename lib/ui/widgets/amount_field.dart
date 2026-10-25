@@ -44,6 +44,7 @@ class AmountField extends StatelessWidget {
   /// Called when the user submits the field (e.g. by pressing Enter).
   final ValueChanged<String>? onSubmitted;
 
+  /// Builds the styled and semantically labeled amount input.
   @override
   Widget build(BuildContext context) {
     final borderSide = hasError

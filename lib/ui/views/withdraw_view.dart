@@ -29,6 +29,7 @@ class WithdrawView extends StatelessWidget {
     );
   }
 
+  /// Configures the shared form for withdrawal actions.
   @override
   Widget build(BuildContext context) {
     return AmountFormView(

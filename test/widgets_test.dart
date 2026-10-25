@@ -17,41 +17,38 @@ void main() {
   }
 
   group('AppCard', () {
-    testWidgets('renders child with default 24px padding and surface decoration', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        wrapWidget(
-          const AppCard(
-            child: Text('Card Content'),
-          ),
-        ),
-      );
+    testWidgets(
+      'renders child with default 24px padding and surface decoration',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          wrapWidget(const AppCard(child: Text('Card Content'))),
+        );
 
-      expect(find.text('Card Content'), findsOneWidget);
+        expect(find.text('Card Content'), findsOneWidget);
 
-      final containerFinder = find.byType(Container);
-      expect(containerFinder, findsOneWidget);
+        final containerFinder = find.byType(Container);
+        expect(containerFinder, findsOneWidget);
 
-      final container = tester.widget<Container>(containerFinder);
-      expect(container.padding, const EdgeInsets.all(AppSpacing.sp24));
+        final container = tester.widget<Container>(containerFinder);
+        expect(container.padding, const EdgeInsets.all(AppSpacing.sp24));
 
-      final decoration = container.decoration as BoxDecoration;
-      expect(decoration.color, AppColors.surface);
-      expect(
-        decoration.borderRadius,
-        BorderRadius.circular(AppSpacing.radiusCard),
-      );
-      expect(
-        decoration.border,
-        Border.all(color: AppColors.border, width: 1.0),
-      );
-      expect(decoration.boxShadow, isNotNull);
-      expect(decoration.boxShadow!.length, 1);
-      expect(decoration.boxShadow!.first.color, AppColors.cardShadow);
-      expect(decoration.boxShadow!.first.blurRadius, 12.0);
-      expect(decoration.boxShadow!.first.offset, const Offset(0, 2));
-    });
+        final decoration = container.decoration as BoxDecoration;
+        expect(decoration.color, AppColors.surface);
+        expect(
+          decoration.borderRadius,
+          BorderRadius.circular(AppSpacing.radiusCard),
+        );
+        expect(
+          decoration.border,
+          Border.all(color: AppColors.border, width: 1.0),
+        );
+        expect(decoration.boxShadow, isNotNull);
+        expect(decoration.boxShadow!.length, 1);
+        expect(decoration.boxShadow!.first.color, AppColors.cardShadow);
+        expect(decoration.boxShadow!.first.blurRadius, 12.0);
+        expect(decoration.boxShadow!.first.offset, const Offset(0, 2));
+      },
+    );
 
     testWidgets('respects custom padding', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -69,33 +66,31 @@ void main() {
   });
 
   group('ViewHeader', () {
-    testWidgets('displays title and subtitle with correct text styles and spacing', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        wrapWidget(
-          const ViewHeader(
-            title: 'Test Title',
-            subtitle: 'Test Subtitle',
+    testWidgets(
+      'displays title and subtitle with correct text styles and spacing',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          wrapWidget(
+            const ViewHeader(title: 'Test Title', subtitle: 'Test Subtitle'),
           ),
-        ),
-      );
+        );
 
-      final titleFinder = find.text('Test Title');
-      final subtitleFinder = find.text('Test Subtitle');
+        final titleFinder = find.text('Test Title');
+        final subtitleFinder = find.text('Test Subtitle');
 
-      expect(titleFinder, findsOneWidget);
-      expect(subtitleFinder, findsOneWidget);
+        expect(titleFinder, findsOneWidget);
+        expect(subtitleFinder, findsOneWidget);
 
-      final titleText = tester.widget<Text>(titleFinder);
-      expect(titleText.style, AppText.viewTitle);
+        final titleText = tester.widget<Text>(titleFinder);
+        expect(titleText.style, AppText.viewTitle);
 
-      final subtitleText = tester.widget<Text>(subtitleFinder);
-      expect(subtitleText.style, AppText.subtitle);
+        final subtitleText = tester.widget<Text>(subtitleFinder);
+        expect(subtitleText.style, AppText.subtitle);
 
-      final padding = tester.widget<Padding>(find.byType(Padding));
-      expect(padding.padding, const EdgeInsets.only(bottom: AppSpacing.sp24));
-    });
+        final padding = tester.widget<Padding>(find.byType(Padding));
+        expect(padding.padding, const EdgeInsets.only(bottom: AppSpacing.sp24));
+      },
+    );
   });
 
   group('AmountField', () {
@@ -253,10 +248,7 @@ void main() {
       final container = tester.widget<Container>(find.byType(Container));
       final decoration = container.decoration as BoxDecoration;
       expect(decoration.color, AppColors.errorBg);
-      expect(
-        decoration.border,
-        Border.all(color: AppColors.error, width: 1.0),
-      );
+      expect(decoration.border, Border.all(color: AppColors.error, width: 1.0));
       expect(
         decoration.borderRadius,
         BorderRadius.circular(AppSpacing.radiusControl),
@@ -297,12 +289,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        wrapWidget(
-          const MessageBox(
-            kind: MessageBoxKind.none,
-            text: '',
-          ),
-        ),
+        wrapWidget(const MessageBox(kind: MessageBoxKind.none, text: '')),
       );
 
       final size = tester.getSize(find.byType(MessageBox));
@@ -325,7 +312,8 @@ void main() {
       final semanticsFinder = find.descendant(
         of: find.byType(MessageBox),
         matching: find.byWidgetPredicate(
-          (widget) => widget is Semantics && widget.properties.liveRegion == true,
+          (widget) =>
+              widget is Semantics && widget.properties.liveRegion == true,
         ),
       );
       expect(semanticsFinder, findsOneWidget);
@@ -337,11 +325,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        wrapWidget(
-          const BalanceChip(
-            text: 'Available balance \u20B15,000.00',
-          ),
-        ),
+        wrapWidget(const BalanceChip(text: 'Available balance \u20B15,000.00')),
       );
 
       expect(find.text('Available balance \u20B15,000.00'), findsOneWidget);

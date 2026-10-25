@@ -15,11 +15,7 @@ void main() {
         MaterialApp(
           theme: buildTheme(),
           home: const Scaffold(
-            body: NavItem(
-              number: 1,
-              label: 'Check Balance',
-              selected: false,
-            ),
+            body: NavItem(number: 1, label: 'Check Balance', selected: false),
           ),
         ),
       );
@@ -28,73 +24,65 @@ void main() {
       expect(find.text('Check Balance'), findsOneWidget);
     });
 
-    testWidgets('Selected state displays primary fill, onPrimary text, and mint indicator bar', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildTheme(),
-          home: const Scaffold(
-            body: NavItem(
-              number: 2,
-              label: 'Deposit Money',
-              selected: true,
+    testWidgets(
+      'Selected state displays primary fill, onPrimary text, and mint indicator bar',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildTheme(),
+            home: const Scaffold(
+              body: NavItem(number: 2, label: 'Deposit Money', selected: true),
             ),
           ),
-        ),
-      );
+        );
 
-      // Check mint indicator bar exists
-      final mintBarFinder = find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.color == AppColors.mint,
-      );
-      expect(mintBarFinder, findsOneWidget);
+        // Check mint indicator bar exists
+        final mintBarFinder = find.byWidgetPredicate(
+          (w) => w is Container && w.color == AppColors.mint,
+        );
+        expect(mintBarFinder, findsOneWidget);
 
-      // Check background fill is primary
-      final primaryBgFinder = find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.color == AppColors.primary,
-      );
-      expect(primaryBgFinder, findsOneWidget);
+        // Check background fill is primary
+        final primaryBgFinder = find.byWidgetPredicate(
+          (w) => w is Container && w.color == AppColors.primary,
+        );
+        expect(primaryBgFinder, findsOneWidget);
 
-      // Check label text style color is onPrimary
-      final textWidget = tester.widget<Text>(find.text('Deposit Money'));
-      expect(textWidget.style?.color, AppColors.onPrimary);
-      expect(textWidget.style?.fontWeight, FontWeight.w600);
-    });
+        // Check label text style color is onPrimary
+        final textWidget = tester.widget<Text>(find.text('Deposit Money'));
+        expect(textWidget.style?.color, AppColors.onPrimary);
+        expect(textWidget.style?.fontWeight, FontWeight.w600);
+      },
+    );
 
-    testWidgets('Unselected state displays navText color and transparent indicator bar', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildTheme(),
-          home: const Scaffold(
-            body: NavItem(
-              number: 3,
-              label: 'Withdraw Money',
-              selected: false,
+    testWidgets(
+      'Unselected state displays navText color and transparent indicator bar',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildTheme(),
+            home: const Scaffold(
+              body: NavItem(
+                number: 3,
+                label: 'Withdraw Money',
+                selected: false,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // No mint bar
-      final mintBarFinder = find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.color == AppColors.mint,
-      );
-      expect(mintBarFinder, findsNothing);
+        // No mint bar
+        final mintBarFinder = find.byWidgetPredicate(
+          (w) => w is Container && w.color == AppColors.mint,
+        );
+        expect(mintBarFinder, findsNothing);
 
-      // Check label text style color is navText
-      final textWidget = tester.widget<Text>(find.text('Withdraw Money'));
-      expect(textWidget.style?.color, AppColors.navText);
-      expect(textWidget.style?.fontWeight, FontWeight.normal);
-    });
+        // Check label text style color is navText
+        final textWidget = tester.widget<Text>(find.text('Withdraw Money'));
+        expect(textWidget.style?.color, AppColors.navText);
+        expect(textWidget.style?.fontWeight, FontWeight.normal);
+      },
+    );
 
     testWidgets('Hover state provides visual feedback with translucent tint', (
       WidgetTester tester,
@@ -116,15 +104,12 @@ void main() {
       // Initially unhovered: transparent
       final initialBgFinder = find.byWidgetPredicate(
         (w) =>
-            w is Container &&
-            w.color == Colors.white.withValues(alpha: 0.08),
+            w is Container && w.color == Colors.white.withValues(alpha: 0.08),
       );
       expect(initialBgFinder, findsNothing);
 
       // Hover over NavItem
-      final gesture = await tester.createGesture(
-        kind: PointerDeviceKind.mouse,
-      );
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await gesture.addPointer(location: Offset.zero);
       await gesture.moveTo(tester.getCenter(find.byType(NavItem)));
       await tester.pumpAndSettle();
@@ -132,52 +117,52 @@ void main() {
       // Now hovered: translucent white container appears
       final hoveredBgFinder = find.byWidgetPredicate(
         (w) =>
-            w is Container &&
-            w.color == Colors.white.withValues(alpha: 0.08),
+            w is Container && w.color == Colors.white.withValues(alpha: 0.08),
       );
       expect(hoveredBgFinder, findsOneWidget);
 
       await gesture.removePointer();
     });
 
-    testWidgets('Keyboard focus displays visible focus ring in AppColors.lavender', (
-      WidgetTester tester,
-    ) async {
-      final focusNode = FocusNode();
-      addTearDown(focusNode.dispose);
+    testWidgets(
+      'Keyboard focus displays visible focus ring in AppColors.lavender',
+      (WidgetTester tester) async {
+        final focusNode = FocusNode();
+        addTearDown(focusNode.dispose);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildTheme(),
-          home: Scaffold(
-            body: NavItem(
-              number: 1,
-              label: 'Check Balance',
-              selected: false,
-              focusNode: focusNode,
-              onTap: () {},
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildTheme(),
+            home: Scaffold(
+              body: NavItem(
+                number: 1,
+                label: 'Check Balance',
+                selected: false,
+                focusNode: focusNode,
+                onTap: () {},
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Initially unfocused: no focus ring
-      final focusRingFinder = find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.decoration is BoxDecoration &&
-            (w.decoration as BoxDecoration).border ==
-                Border.all(color: AppColors.lavender, width: 2.0),
-      );
-      expect(focusRingFinder, findsNothing);
+        // Initially unfocused: no focus ring
+        final focusRingFinder = find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.decoration is BoxDecoration &&
+              (w.decoration as BoxDecoration).border ==
+                  Border.all(color: AppColors.lavender, width: 2.0),
+        );
+        expect(focusRingFinder, findsNothing);
 
-      // Request focus
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
+        // Request focus
+        focusNode.requestFocus();
+        await tester.pumpAndSettle();
 
-      // Focus ring is rendered
-      expect(focusRingFinder, findsOneWidget);
-    });
+        // Focus ring is rendered
+        expect(focusRingFinder, findsOneWidget);
+      },
+    );
 
     testWidgets('Enter and Space keys activate the item', (
       WidgetTester tester,
@@ -248,11 +233,7 @@ void main() {
         MaterialApp(
           theme: buildTheme(),
           home: const Scaffold(
-            body: NavItem(
-              number: 1,
-              label: 'Check Balance',
-              selected: true,
-            ),
+            body: NavItem(number: 1, label: 'Check Balance', selected: true),
           ),
         ),
       );
