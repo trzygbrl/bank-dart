@@ -1,0 +1,26 @@
+# Dart and Flutter build output
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE and OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Note: flutter create adds more entries. Merge them, do not replace this file.
+
+# Additional Flutter and Dart entries
+.pub-cache/
+.pub/
+.packages
+**/doc/api/
+/coverage/
+*.log
+*.class
+*.swp
+app.*.symbols
+app.*.map.json
