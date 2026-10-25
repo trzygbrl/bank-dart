@@ -21,7 +21,7 @@ class SimpleBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple Bank',
+      title: 'SimplyBank',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       home: const HomePage(),

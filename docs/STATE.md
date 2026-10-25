@@ -7,7 +7,7 @@ PROJECT STATE (after Tasks D-07 to D-13)
   - Dart SDK: 3.13.7
   - Desktop Toolchain: Visual Studio Community 2026 (requires C++ desktop development workload for Windows desktop build)
 - Files in lib/ and test/:
-  - lib/main.dart: Entry point main() launching SimpleBankApp with theme: buildTheme(), title: 'Simple Bank', and home: const HomePage().
+  - lib/main.dart: Entry point main() launching SimpleBankApp with theme: buildTheme(), title: 'SimplyBank', and home: const HomePage().
   - lib/ui/nav_item.dart: Reusable, styled, and accessible NavItem widget with hover, focus ring, keyboard activation, and semantics.
   - lib/ui/home_page.dart: HomePage StatefulWidget managing AppView, owning single BankAccount, building the 240 px sidebar, switching real views (Balance, Deposit, Withdraw, History), and handling exit confirmation.
   - lib/ui/theme.dart: Centralized theme definitions (AppColors, AppSpacing, AppShadows, AppText, buildTheme()).
@@ -63,6 +63,7 @@ PROJECT STATE (after Tasks D-07 to D-13)
   - Top-level function: buildTheme() → ThemeData.
   - Logic layer: TransactionType, Transaction, BankAccount, AmountResult, constants and functions in money_util.dart.
 - Known problems or deviations from the PRD:
+  - App name/title, native desktop window title, sidebar brand caption, and Exit dialog title were customized to "SimplyBank", "by JAKLAT Inc.", and "Exit SimplyBank" per user instruction (custom group activity branding replacing the generic "Simple Bank", "Personal Banking", and "Exit Simple Bank").
   - Native window-close interception (PRD §9.7 UI-12) is implemented via AppLifecycleListener.onExitRequested on a best-effort basis without third-party window-management dependencies; desktop limitations are documented in code and README.md.
   - The sidebar caption uses 14 px to honor PRD §9.1's minimum readable text size, despite the D-13 task brief listing 12 px. The PRD remains authoritative.
   - Group and member names were not provided; `lib/main.dart` and README.md mark these values as not provided rather than inventing names.

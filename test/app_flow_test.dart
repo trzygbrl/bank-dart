@@ -25,7 +25,7 @@ void main() {
 
     expect(find.text(startingBalance), findsOneWidget);
     expect(
-      tester.widget<Text>(find.text('Personal Banking')).style!.fontSize,
+      tester.widget<Text>(find.text('by JAKLAT Inc.')).style!.fontSize,
       14,
     );
     expect(
@@ -169,7 +169,7 @@ void main() {
 
     await tester.tap(find.widgetWithText(NavItem, 'Exit'));
     await tester.pumpAndSettle();
-    expect(find.text('Exit Simple Bank'), findsOneWidget);
+    expect(find.text('Exit SimplyBank'), findsOneWidget);
     expect(
       find.text(
         'Thank you for banking with us. Are you sure you want to exit?',

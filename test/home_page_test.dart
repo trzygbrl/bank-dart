@@ -34,8 +34,8 @@ void main() {
         await tester.pumpAndSettle();
 
         // Check branding
-        expect(find.text('Simple Bank'), findsOneWidget);
-        expect(find.text('Personal Banking'), findsOneWidget);
+        expect(find.text('SimplyBank'), findsOneWidget);
+        expect(find.text('by JAKLAT Inc.'), findsOneWidget);
 
         // 5 NavItems
         final navItemWidgets = tester
@@ -338,7 +338,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(AlertDialog), findsOneWidget);
-        expect(find.text('Exit Simple Bank'), findsOneWidget);
+        expect(find.text('Exit SimplyBank'), findsOneWidget);
         expect(
           find.text(
             'Thank you for banking with us. Are you sure you want to exit?',

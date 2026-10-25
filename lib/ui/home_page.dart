@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
       barrierDismissible: true,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Exit Simple Bank'),
+          title: const Text('Exit SimplyBank'),
           content: const Text(
             'Thank you for banking with us. Are you sure you want to exit?',
           ),
@@ -252,10 +252,10 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Simple Bank', style: AppText.brand),
+                                    Text('SimplyBank', style: AppText.brand),
                                     const SizedBox(height: AppSpacing.sp4),
                                     const Text(
-                                      'Personal Banking',
+                                      'by JAKLAT Inc.',
                                       style: TextStyle(
                                         color: AppColors.navText,
                                         fontSize: 14.0,

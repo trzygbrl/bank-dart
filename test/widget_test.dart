@@ -15,15 +15,15 @@ void main() {
       final MaterialApp materialApp = tester.widget<MaterialApp>(
         find.byType(MaterialApp),
       );
-      expect(materialApp.title, 'Simple Bank');
+      expect(materialApp.title, 'SimplyBank');
       expect(materialApp.debugShowCheckedModeBanner, isFalse);
 
       // Verify HomePage is present
       expect(find.byType(HomePage), findsOneWidget);
 
       // Verify sidebar branding
-      expect(find.text('Simple Bank'), findsOneWidget);
-      expect(find.text('Personal Banking'), findsOneWidget);
+      expect(find.text('SimplyBank'), findsOneWidget);
+      expect(find.text('by JAKLAT Inc.'), findsOneWidget);
 
       // Verify all 5 navigation items are present
       expect(find.byType(NavItem), findsNWidgets(5));
