@@ -27,7 +27,7 @@ PROJECT STATE (after Tasks D-07 to D-13)
   - lib/logic/money_util.dart: Pure Dart. Constants: currencySymbol, maxAmountCentavos, invalidNumberMessage, mustBePositiveMessage, maxTwoDecimalsMessage, tooLargeMessage. Class: AmountResult. Functions: formatMoney, validateAmount.
   - test/widget_test.dart: 1 widget test verifying SimpleBankApp launch, MaterialApp configuration, sidebar items, and initial Check Balance load.
   - test/nav_item_test.dart: 8 widget tests verifying NavItem number/label rendering, selected/unselected styling, hover feedback, focus ring, Enter/Space activation, tap gesture, and semantics.
-  - test/home_page_test.dart: 15 widget tests verifying HomePage launch, view switching, Ctrl+1 to Ctrl+5 shortcuts (including while AmountField has focus), responsive sizing, BankAccount retention, and exit dialog interactions.
+  - test/home_page_test.dart: 16 widget tests verifying HomePage launch, view switching, Ctrl+1 to Ctrl+5 shortcuts (including while AmountField has focus), responsive sizing, BankAccount retention, and exit dialog interactions.
   - test/widgets_test.dart: 12 widget tests covering AppCard, ViewHeader, AmountField, MessageBox, and BalanceChip.
   - test/bank_account_test.dart: 7 unit tests covering account initialization, transactions, invalid amounts, and read-only history.
   - test/money_util_test.dart: 31 unit tests covering formatMoney and validateAmount.
@@ -67,9 +67,8 @@ PROJECT STATE (after Tasks D-07 to D-13)
   - The sidebar caption uses 14 px to honor PRD §9.1's minimum readable text size, despite the D-13 task brief listing 12 px. The PRD remains authoritative.
   - Group and member names were not provided; `lib/main.dart` and README.md mark these values as not provided rather than inventing names.
 - Verification:
-  - Baseline before D-12 additions: `flutter analyze` passed with 0 issues; `flutter test` passed all 100 tests.
-  - D-12 focused integration: `flutter test test/app_flow_test.dart` passed (2 tests).
-  - D-12 final verification: `flutter analyze` reported 0 issues; `flutter test` passed all 102 tests.
+  - flutter analyze: Passed with 0 issues reported.
+  - flutter test: Passed successfully.
 - Analyze: flutter analyze
 - Test: flutter test
 - Run command: flutter run -d windows (or macos / linux)
@@ -91,6 +90,7 @@ PROJECT STATE (after Tasks D-07 to D-13)
 - Rewrote `README.md` with setup/run/test commands, architecture, feature scope, accessibility and platform notes, and an explicit PRD §11 concept-to-code map.
 - Added `DEMO.md` with a timed two-minute presentation script.
 - Applied the standard formatter across the Dart project and reran analysis and tests.
-- During cleanup, verification exposed missing Ctrl+1–Ctrl+5 bindings despite the existing project documentation and D-11 requirement. Restored app-wide `CallbackShortcuts` and added HomePage tests for all five shortcuts, text entry in AmountField, and shortcut propagation while the field is focused.
-- Final D-13 verification: `flutter analyze` passed with 0 issues; `flutter test` passed all 104 tests.
+- Reconciled the D-11 merge changes: app-wide Ctrl+1–Ctrl+5 shortcuts remain wired with `CallbackShortcuts`; tests cover all five shortcuts, text entry in `AmountField`, navigation while it is focused, and each content view at 860 px and 1000 px widths.
+- Resolved the conflicting test and documentation edits while retaining the account guards against non-positive direct calls and the D-13 project documentation.
+- Final D-13 verification: `flutter analyze` passed with 0 issues; `flutter test` passed all 107 tests.
 - Project status: Complete. The 14 px sidebar caption follows the PRD's 14 px minimum rather than the conflicting 12 px value in the D-13 brief.

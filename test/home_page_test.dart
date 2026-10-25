@@ -9,6 +9,20 @@ import 'package:simple_bank_flutter/ui/nav_item.dart';
 import 'package:simple_bank_flutter/ui/theme.dart';
 import 'package:simple_bank_flutter/ui/widgets/view_header.dart';
 
+Future<void> _pressControlDigit(WidgetTester tester, int digit) async {
+  const keys = <int, LogicalKeyboardKey>{
+    1: LogicalKeyboardKey.digit1,
+    2: LogicalKeyboardKey.digit2,
+    3: LogicalKeyboardKey.digit3,
+    4: LogicalKeyboardKey.digit4,
+    5: LogicalKeyboardKey.digit5,
+  };
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(keys[digit]!);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   group('HomePage widget tests', () {
     testWidgets(
@@ -123,49 +137,56 @@ void main() {
     testWidgets('Ctrl+1 through Ctrl+5 shortcuts work across views', (
       WidgetTester tester,
     ) async {
+      int? exitCode;
       await tester.pumpWidget(
-        MaterialApp(theme: buildTheme(), home: const HomePage()),
+        MaterialApp(
+          theme: buildTheme(),
+          home: HomePage(onExit: (code) => exitCode = code),
+        ),
       );
       await tester.pumpAndSettle();
 
-      await _pressControlShortcut(tester, LogicalKeyboardKey.digit2);
-      expect(find.text('Add funds to your account'), findsOneWidget);
+      await _pressControlDigit(tester, 2);
+      expect(find.widgetWithText(ViewHeader, 'Deposit Money'), findsOneWidget);
 
-      await _pressControlShortcut(tester, LogicalKeyboardKey.digit3);
-      expect(find.text('Take funds from your account'), findsOneWidget);
+      await _pressControlDigit(tester, 3);
+      expect(find.widgetWithText(ViewHeader, 'Withdraw Money'), findsOneWidget);
 
-      await _pressControlShortcut(tester, LogicalKeyboardKey.digit4);
+      await _pressControlDigit(tester, 4);
       expect(
-        find.text('All successful deposits and withdrawals'),
+        find.widgetWithText(ViewHeader, 'Transaction History'),
         findsOneWidget,
       );
 
-      await _pressControlShortcut(tester, LogicalKeyboardKey.digit1);
-      expect(find.text('Your account at a glance'), findsOneWidget);
+      await _pressControlDigit(tester, 1);
+      expect(find.widgetWithText(ViewHeader, 'Check Balance'), findsOneWidget);
 
-      await _pressControlShortcut(tester, LogicalKeyboardKey.digit5);
-      expect(find.text('Exit Simple Bank'), findsOneWidget);
-      await tester.tap(find.text('Stay'));
+      await _pressControlDigit(tester, 5);
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Stay'));
       await tester.pumpAndSettle();
-      expect(find.text('Your account at a glance'), findsOneWidget);
+      expect(exitCode, isNull);
+      expect(find.byType(HomePage), findsOneWidget);
     });
 
     testWidgets(
-      'Ctrl shortcuts work in AmountField while unmodified digits remain text input',
+      'shortcuts work while amount field is focused and typing remains available',
       (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(theme: buildTheme(), home: const HomePage()),
         );
         await tester.pumpAndSettle();
 
-        await _pressControlShortcut(tester, LogicalKeyboardKey.digit2);
-        final Finder amountField = find.byType(TextField);
-        await tester.tap(amountField);
-        await tester.enterText(amountField, '1');
-        expect(tester.widget<TextField>(amountField).controller!.text, '1');
+        await _pressControlDigit(tester, 2);
+        final amountField = find.byType(TextField);
+        await tester.enterText(amountField, '123');
+        expect(tester.widget<TextField>(amountField).controller!.text, '123');
 
-        await _pressControlShortcut(tester, LogicalKeyboardKey.digit3);
-        expect(find.text('Take funds from your account'), findsOneWidget);
+        await _pressControlDigit(tester, 3);
+        expect(
+          find.widgetWithText(ViewHeader, 'Withdraw Money'),
+          findsOneWidget,
+        );
       },
     );
 
@@ -203,6 +224,44 @@ void main() {
         tester.view.physicalSize = const Size(860, 560);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'all views render without overflow at widths 860px and 1000px',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          MaterialApp(theme: buildTheme(), home: const HomePage()),
+        );
+        await tester.pumpAndSettle();
+
+        final dynamic state = tester.state(find.byType(HomePage));
+        (state.account as BankAccount).deposit(100000);
+        await tester.pumpAndSettle();
+
+        for (final width in <double>[860, 1000]) {
+          tester.view.physicalSize = Size(width, 560);
+          await tester.pumpAndSettle();
+
+          for (final label in <String>[
+            'Check Balance',
+            'Deposit Money',
+            'Withdraw Money',
+            'View Transaction History',
+          ]) {
+            await tester.tap(find.widgetWithText(NavItem, label));
+            await tester.pumpAndSettle();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: '$label should fit at $width px wide',
+            );
+          }
+        }
       },
     );
 
@@ -448,15 +507,4 @@ void main() {
       expect(response, AppExitResponse.exit);
     });
   });
-}
-
-Future<void> _pressControlShortcut(
-  WidgetTester tester,
-  LogicalKeyboardKey key,
-) async {
-  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
-  await tester.sendKeyDownEvent(key);
-  await tester.sendKeyUpEvent(key);
-  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
-  await tester.pumpAndSettle();
 }

@@ -29,7 +29,7 @@ enum AppView {
 
 /// Main desktop application shell for Simple Bank.
 ///
-/// Owns the in-memory account and coordinates navigation, active views,
+/// Owns the account and coordinates sidebar navigation, active views,
 /// keyboard shortcuts, and exit confirmation.
 class HomePage extends StatefulWidget {
   /// Creates the [HomePage] widget.

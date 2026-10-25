@@ -56,6 +56,25 @@ void main() {
       expect(tx.balanceAfterCentavos, 0);
     });
 
+    test('non-positive deposits are ignored', () {
+      final account = BankAccount();
+
+      account.deposit(0);
+      account.deposit(-1000);
+
+      expect(account.balance, 500000);
+      expect(account.transactions, isEmpty);
+    });
+
+    test('non-positive withdrawals are rejected without changing state', () {
+      final account = BankAccount();
+
+      expect(account.withdraw(0), isFalse);
+      expect(account.withdraw(-250), isFalse);
+      expect(account.balance, 500000);
+      expect(account.transactions, isEmpty);
+    });
+
     test('transaction list is read-only and cannot be modified externally', () {
       final account = BankAccount();
       account.deposit(100000);
